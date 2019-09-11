@@ -1,14 +1,23 @@
-exports.userValidation = (req, res, callback) => {
+const UserServices=require('../Services/userServices');
 
-    req.checkBody(req.body.username,"user invalid").isString().isLength({ min: 2 });
 
-    var error = req.validationResult();
-    if (error)
-        res.status(404).send("error");
-    else
-        res.status(200).send("working fine");
+//new user validation 
+exports.userValidation = (req, res) => {
+    req.checkBody('username','Invalid Username').isString().trim().isLength({min : 2});
+    req.checkBody('email','Invalid Email').isEmail();
+    //req.checkBody('password','password length must be 8').isLength({min : 8}).equals(req.body.confirmPassword);
+    req.getValidationResult().then((errors)=>{
+        if(!errors.isEmpty())
+            res.status(404).send("not valid details");   
+        else
+            UserServices.registration(req,res);
+    })
+}
 
-//   req.checkbody('username','username invalid').isString();
+    //}
+    //res.status(200).send("working fine");
+
+    //   req.checkbody('username','username invalid').isString();
     /* const user = new User({
         username: req.check(req.body.username).,
         firstname: req.body.firstname,
@@ -20,4 +29,3 @@ exports.userValidation = (req, res, callback) => {
         message: "i have received these following details",
         users: user
     })*/
-}
