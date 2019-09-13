@@ -25,6 +25,9 @@ const userSchema=mongoose.Schema({
         type : String,
         min : 8,
         required : true
+    },
+    timestamp :{
+        type : Date
     }
 });
 
