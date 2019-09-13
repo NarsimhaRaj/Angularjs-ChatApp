@@ -1,3 +1,11 @@
+/**
+ * @purpose : Server Connection and respond to user request
+ * @file : server.js
+ * @overview : to make connection with Server  and respond to user request
+ * @author : NarsimhaRaj 
+ * @since : 09/09/2019
+ * 
+ */
 const express = require('express');
 const app = express();
 
@@ -8,7 +16,7 @@ const expressValidator = require('express-validator');
 const mongoose = require('mongoose');
 //var validateOptions={};
 //connecting to mongoose database
-mongoose.connect("mongodb://localhost:27017/mydb",{useNewUrlParser: true,useUnifiedTopology:true, useCreateIndex :true},function(err,db){
+mongoose.connect("mongodb://localhost:27017/mydb",{useFindAndModify:false,useNewUrlParser: true,useUnifiedTopology:true, useCreateIndex :true},function(err,db){
     if(err) console.log("not connecting");
     else console.log("connected to db");
 });

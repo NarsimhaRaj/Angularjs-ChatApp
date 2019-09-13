@@ -5,6 +5,13 @@ require('dotenv').config();
 
 const bcrypt = require('bcrypt');
 require('dotenv').config();
+
+/**
+ * @description : In login user will be verified first then his password will be checked, if all good loggin will be successfull
+ * else sends response back to callback with a message     
+ * @param {req}, req is request from client 
+ * @param {callback}, callback is a function in which responses from server will be passed
+ */
 //exporting user valid details
 exports.login = (req, callback) => {
     var username = req.body.username
@@ -31,7 +38,13 @@ exports.login = (req, callback) => {
             callback(err);
         });
 }
-exports.registration = (req, res, callback) => {
+/**
+ * @description : user registration details will be stored to mongodb database, email and username in mongoose schema 
+ * has property called unique which set to true, means no other user will have same email or username    
+ * @param {req}, req is request from client 
+ * @param {callback}, callback is a function in which responses from server will be passed
+ */
+exports.registration = (req, callback) => {
     //encrypting password with hash function
     bcrypt.hash(req.body.password, 5, function (err, hash) {
         if (err)
@@ -49,55 +62,67 @@ exports.registration = (req, res, callback) => {
     });
 
 }
-
+/**
+ * @description : Once the user is verified as existing client then an email with a link and token will be sent  
+ * @param {req}, req is request from client 
+ * @param {callback}, callback is a function in which responses from server will be passed
+ */
 exports.forgotPassword = (req, callback) => {
-    let transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true, // true for 465, false for other ports
-        auth: {
-            user: process.env.EMAIL, // generated ethereal user
-            pass: process.env.PASSWORD // generated ethereal password
-        },
-        tls: { rejectUnauthorized: false }
-    });
-    // Message object
-    var token = jwt.sign({ username: req.body.email }, process.env.KEY, { expiresIn: "1h" });
+    User.find({ email: req.body.email }).exec().then(user => {
+        if (user.length < 1) callback("user not found");
+        else {
+            let transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com', port: 465,
+                secure: true, 
+                auth: {
+                    user: process.env.EMAIL, // generated ethereal user
+                    pass: process.env.PASSWORD // generated ethereal password
+                },
+                tls: { rejectUnauthorized: false }
+            });
+            var token = jwt.sign({ email: "ramarao232323@gmail.com" }, process.env.KEY, { expiresIn: "1h" });
 
-    var message = {
+            var message = {
+                from: process.env.EMAIL,
+                to: req.body.email,
+                subject: 'Reset Password for your Chat App', // Subject line
+                text: 'Click on the following link to reset password \n' + "http://localhost:3000/resetPassword/" + "\n" + token, // plain text body
+                html: '' // html body
+            };
 
-        // sender info
-        from: process.env.EMAIL,
-
-        // Comma separated list of recipients
-        to: req.body.email,
-        subject: 'Reset Password for your Chat App', // Subject line
-        text: 'Click on the following link to reset password \n' + "http://localhost:3000/resetPassword/" + token, // plain text body
-        html: '' // html body
-    };
-
-    transporter.sendMail(message, function (error, response) {
-        if (error) {
-            callback(error);
-            return;
+            transporter.sendMail(message, function (error, response) {
+                if (error) callback(error);
+                else callback(response);
+            });
         }
-        callback(response);
-    });
-};
+    }).catch(error => callback("Invalid email"));
 
+};
+// var createTransport=()=>{
+
+// }
+//resetting the password 
+/**
+ * @description : first verfying the token which was sent to user from narsimhacodepractice@gmail.com, once its verified 
+ * decoded mail will be searched in the database if email exists in db then replaces the password with new password 
+ * @param {req}, req is request from client 
+ * @param {callback}, callback is a function in which responses from server will be passed
+ */
 exports.resetPassword = (req, callback) => {
     jwt.verify(req.body.token, process.env.KEY, function (err, decode) {
         if (err) callback("verifcation failed");
         else {
-            bcrypt.hash(req.body.password,5,function(err,hash){
-                if(err) callback(err);
-                else
-                {
-                    User.findOneAndUpdate({email:decode.email},{$set : { password : hash}},{new:true})
-                    .then(user=>callback(user)).catch(error=>callback(error));
+            bcrypt.hash(req.body.password, 5, function (err, hash) {
+                if (err) callback("hashing error");
+                else {
+                    User.findOneAndUpdate({ email: decode.email }, { $set: { password: hash } }, { new: true }).exec()
+                        .then((user) => {
+                            callback(null, user)
+                        })
+                        .catch((error) => callback("email not matched"));
                 }
             })
-            
+
         }
     });
 }
