@@ -11,18 +11,18 @@ const bcrypt = require('bcrypt');
  * @param {callback}, callback is a function in which responses from server will be passed
  */
 //exporting user valid details
-exports.login = (req, callback) => {
-    var username = req.body.username
+exports.login = (body, callback) => {
+    var username = body.username
     User.find({ username: username }).exec().then(user => {
 
         if (user.length < 1)
             callback("Entered wrong username")
         else {
             //comparing the password with hashed db password
-            bcrypt.compare(req.body.password, user[0].password, function (err, result) {
+            bcrypt.compare(body.password, user[0].password, function (err, result) {
                 if (!result) { callback("Entered wrong Passwrod"); }
                 if (result) {
-                    //created a JWT Token based loggin
+                    //generates a token on loggin
                     var tkn = token.generateToken({ username: user[0].username, id: user[0]._id }, process.env.KEY, { expiresIn: "1h" });
                     callback(null, tkn);
                 }
@@ -37,36 +37,37 @@ exports.login = (req, callback) => {
  * @param {req}, req is request from client 
  * @param {callback}, callback is a function in which responses from server will be passed
  */
-exports.registration = (req, callback) => {
+exports.registration = (body, callback) => {
     //encrypting password with hash function
-    bcrypt.hash(req.body.password, 5, function (err, hash) {
-        if (err)
-            callback("Error occured in hashing");
+    var user = {
+        username: body.username,
+        firstname: body.firstname,
+        lastname: body.lastname,
+        email: body.email,
+        timestamp: (new Date())
+    };
+    bcrypt.hash(body.password, 5, function (err, hash) {
+        if (err) callback("error in hashing")
         else {
-            var user = new User({
-                username: req.body.username,
-                firstname: req.body.firstname,
-                lastname: req.body.lastname,
-                email: req.body.email,
-                password: hash
-            });
-            user.save().then(user => callback(null, user)).catch(err => callback(err));
+            user.password = hash;
+            var newUser=new User(user);
+            newUser.save().then(user => callback(null, user)).catch(err => callback(err));
         }
     });
-
+    
 }
 /**
  * @description : Once the user is verified as existing client then an email with a link and token will be sent  
  * @param {req}, req is request from client 
  * @param {callback}, callback is a function in which responses from server will be passed
  */
-exports.forgotPassword = (req, callback) => {
-    User.find({ email: req.body.email }).exec().then(user => {
+exports.forgotPassword = (body, callback) => {
+    User.find({ email: body.email }).exec().then(user => {
         if (user.length < 1) callback("user not found");
         else {
-            var tkn = token.generateToken({ email: req.body.email });
+            var tkn = token.generateToken({ email: body.email });
 
-            mail.sendMail(req, tkn, (error, response) => {
+            mail.sendMail(body, tkn, (error, response) => {
                 if (error)
                     callback("could not sent mail");
                 else
@@ -87,14 +88,14 @@ exports.forgotPassword = (req, callback) => {
  * @param {req}, req is request from client 
  * @param {callback}, callback is a function in which responses from server will be passed
  */
-exports.resetPassword = (req, callback) => {
+exports.resetPassword = (body, callback) => {
 
-    var decode = token.verifyToken(req.body.token);
+    var decode = token.verifyToken(body.token);
     if (decode.email) {
-        bcrypt.hash(req.body.password, 5, function (err, hash) {
+        bcrypt.hash(body.password, 5, function (err, hashedPassword) {
             if (err) callback("hashing error");
             else {
-                User.findOneAndUpdate({ email: decode.email }, { $set: { password: hash } }, { new: true }).exec()
+                User.findOneAndUpdate({ email: decode.email }, { $set: { password: hashedPassword } }, { new: true }).exec()
                     .then((user) => {
                         callback(null, user)
                     })
