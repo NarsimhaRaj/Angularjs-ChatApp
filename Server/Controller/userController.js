@@ -14,23 +14,23 @@ exports.login = (req, res) => {
     req.getValidationResult().then((err) => {
         if (!err.isEmpty()) {
             response.message = "Enterd details are not in correct format ";
-            res.send(response);
+            res.status(422).send(response);
         }
         else {
-            UserServices.login(req, (err, result) => {
+            UserServices.login(req.body, (err, result) => {
                 if (err) {
                     response.message = err;
-                    res.send(response);
+                    res.status(404).send(response);
                 }
                 else {
                     response.data = result;
                     response.message = "successfully logged in";
                     response.status = true;
-                    res.send(response);
+                    res.status(200).send(response);
                 }
             })
         }
-    });
+    }).catch(err=>res.status(500).send("Error occured in getting validation result"));
 }
 //new user validation 
 /**
@@ -40,7 +40,7 @@ exports.login = (req, res) => {
  * @param {callback}, callback is a function in which responses from server will be passed
  */
 exports.register = (req, res) => {
-    var response = {}// data: null, status: false }
+    var response = {}
 
     req.checkBody('username', 'Invalid Username').isString().trim().isLength({ min: 2 });
     req.checkBody('email', 'Invalid Email').isEmail();
@@ -51,23 +51,24 @@ exports.register = (req, res) => {
     req.getValidationResult().then((errors) => {
         if (!errors.isEmpty()) {
             response.message = "Enterd details are not in correct format ";
-            res.send(response);
+            res.status(422).send(response);
         }
         else {
-            UserServices.registration(req, (err, data) => {
+            
+            UserServices.registration(req.body, (err, data) => {
                 if (err) {
                     response.message = err;
-                    res.send(response);
+                    res.status(404).send(response);
                 }
                 else {
                     response.data = data;
                     response.message = "Registerd successfully";
                     response.status = true;
-                    res.send(response);
+                    res.status(200).send(response);
                 }
             });
         }
-    })
+    }).catch(err=>res.status(500).send("Error occured in getting validation result"))
 }
 //forgot Password 
 /**
@@ -78,28 +79,28 @@ exports.register = (req, res) => {
  */
 exports.forgotPassword = (req, res) => {
 
-    var response = {}//data: null, status: false }
+    var response = {}
     req.checkBody('email', 'Invalid Email').isEmail();
     req.getValidationResult().then((err) => {
         if (!err.isEmpty()) {
             response.message = "invalid email";
-            res.send(response)
+            res.status(422).send(response)
         }
         else {
             //forgot password
-            UserServices.forgotPassword(req, (err, data) => {
+            UserServices.forgotPassword(req.body, (err, data) => {
                 if (err) {
                     response.message = err;
-                    res.send(response);
+                    res.status(404).send(response);
                 }
                 else {
                     response.data = data;
                     response.status = true;
-                    res.send(response);
+                    res.status(200).send(response);
                 }
             });
         }
-    }).catch(err => { res.send(err) });
+    }).catch(err=>res.status(500).send("Error occured in getting validation result"));
 }
 //reseting password
 /**
@@ -109,16 +110,16 @@ exports.forgotPassword = (req, res) => {
  */
 exports.resetPassword = (req, res) => {
 
-    var response ={};// { data: "", status: false, message: "" };
+    var response ={};
 
     req.checkBody('password', "password length must be 8").isLength({ min: 8 }).equals(req.body.confirmPassword);
     req.getValidationResult().then((err) => {
         if (!err.isEmpty()) {
             response.data = err; response.message = "password and confirm password not matching";
-            res.send(response)
+            res.status(422).send(response)
         }
         else {
-            UserServices.resetPassword(req, (err, result) => {
+            UserServices.resetPassword(req.body, (err, result) => {
                 if (err) {
                     response.data = err;
                     response.message = "error occured in restting password ";
@@ -128,9 +129,9 @@ exports.resetPassword = (req, res) => {
                     response.status = true;
                     response.message = "Password has been changed "
                     response.data = result.email;
-                    res.status(404).send(response);
+                    res.status(200).send(response);
                 }
             });
         }
-    }).catch(err=>res.status(404).send("Password not as required "));
+    }).catch(err=>res.status(500).send("Password not as required "));
 }
