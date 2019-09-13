@@ -1,11 +1,9 @@
 const User = require('../App/Model/userModel');
-const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+const token = require('../Middleware/token');
+const mail = require('../Middleware/mail');
 require('dotenv').config();
 
 const bcrypt = require('bcrypt');
-require('dotenv').config();
-
 /**
  * @description : In login user will be verified first then his password will be checked, if all good loggin will be successfull
  * else sends response back to callback with a message     
@@ -15,28 +13,23 @@ require('dotenv').config();
 //exporting user valid details
 exports.login = (req, callback) => {
     var username = req.body.username
-    User.find({ username: username })
-        .exec()
-        .then(user => {
-            if (user.length < 1)
-                callback("Entered wrong username")
-            else {
-                //comparing the password with hashed db password
-                var password = req.body.password;
-                bcrypt.compare(password, user[0].password, function (err, result) {
-                    if (!result) { callback("Entered wrong Passwrod"); }
-                    if (result) {
-                        //created a JWT Token based loggin
-                        var token = jwt.sign({ username: user[0].username }, process.env.KEY, { expiresIn: "10d" });
-                        callback(null, token);
-                    }
-                });
+    User.find({ username: username }).exec().then(user => {
 
-            }
-        })
-        .catch(err => {
-            callback(err);
-        });
+        if (user.length < 1)
+            callback("Entered wrong username")
+        else {
+            //comparing the password with hashed db password
+            bcrypt.compare(req.body.password, user[0].password, function (err, result) {
+                if (!result) { callback("Entered wrong Passwrod"); }
+                if (result) {
+                    //created a JWT Token based loggin
+                    var tkn = token.generateToken({ username: user[0].username, id: user[0]._id }, process.env.KEY, { expiresIn: "1h" });
+                    callback(null, tkn);
+                }
+            });
+
+        }
+    }).catch(err => callback(err));
 }
 /**
  * @description : user registration details will be stored to mongodb database, email and username in mongoose schema 
@@ -71,31 +64,17 @@ exports.forgotPassword = (req, callback) => {
     User.find({ email: req.body.email }).exec().then(user => {
         if (user.length < 1) callback("user not found");
         else {
-            let transporter = nodemailer.createTransport({
-                host: 'smtp.gmail.com', port: 465,
-                secure: true, 
-                auth: {
-                    user: process.env.EMAIL, // generated ethereal user
-                    pass: process.env.PASSWORD // generated ethereal password
-                },
-                tls: { rejectUnauthorized: false }
-            });
-            var token = jwt.sign({ email: "ramarao232323@gmail.com" }, process.env.KEY, { expiresIn: "1h" });
+            var tkn = token.generateToken({ email: req.body.email });
 
-            var message = {
-                from: process.env.EMAIL,
-                to: req.body.email,
-                subject: 'Reset Password for your Chat App', // Subject line
-                text: 'Click on the following link to reset password \n' + "http://localhost:3000/resetPassword/" + "\n" + token, // plain text body
-                html: '' // html body
-            };
-
-            transporter.sendMail(message, function (error, response) {
-                if (error) callback(error);
-                else callback(response);
+            mail.sendMail(req, tkn, (error, response) => {
+                if (error)
+                    callback("could not sent mail");
+                else
+                    callback(null, response);
             });
+
         }
-    }).catch(error => callback("Invalid email"));
+    }).catch(error => callback("Invalid email " + error));
 
 };
 // var createTransport=()=>{
@@ -109,20 +88,21 @@ exports.forgotPassword = (req, callback) => {
  * @param {callback}, callback is a function in which responses from server will be passed
  */
 exports.resetPassword = (req, callback) => {
-    jwt.verify(req.body.token, process.env.KEY, function (err, decode) {
-        if (err) callback("verifcation failed");
-        else {
-            bcrypt.hash(req.body.password, 5, function (err, hash) {
-                if (err) callback("hashing error");
-                else {
-                    User.findOneAndUpdate({ email: decode.email }, { $set: { password: hash } }, { new: true }).exec()
-                        .then((user) => {
-                            callback(null, user)
-                        })
-                        .catch((error) => callback("email not matched"));
-                }
-            })
 
-        }
-    });
+    var decode = token.verifyToken(req.body.token);
+    if (decode.email) {
+        bcrypt.hash(req.body.password, 5, function (err, hash) {
+            if (err) callback("hashing error");
+            else {
+                User.findOneAndUpdate({ email: decode.email }, { $set: { password: hash } }, { new: true }).exec()
+                    .then((user) => {
+                        callback(null, user)
+                    })
+
+            }
+        });
+    }
+    else
+        callback("email not matched");
+
 }

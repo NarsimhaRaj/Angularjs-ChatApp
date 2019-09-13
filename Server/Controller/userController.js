@@ -7,10 +7,7 @@ const UserServices = require('../Services/userServices');
  * @param {callback}, callback is a function in which responses from server will be passed
  */
 exports.login = (req, res) => {
-    var response = {
-        data: null,
-        status: false
-    }
+    var response = {}
     req.checkBody('username', 'Invalid Username').isString().trim().isLength({ min: 2 });
     req.checkBody('password', 'Invalid password').isLength({ min: 8 });
 
@@ -43,7 +40,7 @@ exports.login = (req, res) => {
  * @param {callback}, callback is a function in which responses from server will be passed
  */
 exports.register = (req, res) => {
-    var response = { data: null, status: false }
+    var response = {}// data: null, status: false }
 
     req.checkBody('username', 'Invalid Username').isString().trim().isLength({ min: 2 });
     req.checkBody('email', 'Invalid Email').isEmail();
@@ -81,7 +78,7 @@ exports.register = (req, res) => {
  */
 exports.forgotPassword = (req, res) => {
 
-    var response = { data: null, status: false }
+    var response = {}//data: null, status: false }
     req.checkBody('email', 'Invalid Email').isEmail();
     req.getValidationResult().then((err) => {
         if (!err.isEmpty()) {
@@ -112,7 +109,7 @@ exports.forgotPassword = (req, res) => {
  */
 exports.resetPassword = (req, res) => {
 
-    var response = { data: null, status: false, message: "" };
+    var response ={};// { data: "", status: false, message: "" };
 
     req.checkBody('password', "password length must be 8").isLength({ min: 8 }).equals(req.body.confirmPassword);
     req.getValidationResult().then((err) => {
@@ -135,5 +132,5 @@ exports.resetPassword = (req, res) => {
                 }
             });
         }
-    })
+    }).catch(err=>res.status(404).send("Password not as required "));
 }
