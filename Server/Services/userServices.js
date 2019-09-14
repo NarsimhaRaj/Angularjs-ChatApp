@@ -107,3 +107,13 @@ exports.resetPassword = (body, callback) => {
         callback("email not matched");
 
 }
+//
+exports.getRegisteredUsers=(req,callback)=>{
+    User.find().exec()
+    .then(users => {
+        if(users.length<1)
+            callback("no registered students");
+        else
+            callback(null,users)
+        }).catch(err=>callback("unable to get data error is :"+err));
+}

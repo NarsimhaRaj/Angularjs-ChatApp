@@ -16,5 +16,7 @@ router.post('/forgotPassword',UserController.forgotPassword);
 //resetting password
 router.post('/resetPassword',UserController.resetPassword);
 
+//get all registered users
+router.get('/getRegisteredUsers',UserController.getRegisteredUsers);
 
 module.exports = router;

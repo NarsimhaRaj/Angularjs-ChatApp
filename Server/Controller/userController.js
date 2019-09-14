@@ -135,3 +135,18 @@ exports.resetPassword = (req, res) => {
         }
     }).catch(err=>res.status(500).send("Password not as required "));
 }
+
+//to get all registered users data
+exports.getRegisteredUsers=(req,res)=>{
+    var response={}
+    UserServices.getRegisteredUsers(req,(err,users)=>{
+        if(err) {
+            response.message=err;
+            res.status(422).send(response);
+        }
+        else {
+            response.data=users;
+            res.status(200).send(response)
+        };
+    });
+}
