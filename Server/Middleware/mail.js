@@ -1,7 +1,7 @@
 const nodemailer=require('nodemailer');
 require('dotenv').config();
 
-exports.sendMail=(req,tkn,callback)=>{
+exports.sendMail=(body,tkn,callback)=>{
     let transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com', port: 465,
         secure: true, 
@@ -13,7 +13,7 @@ exports.sendMail=(req,tkn,callback)=>{
     });
     var message = {
         from: process.env.EMAIL,
-        to: req.body.email,
+        to: body.email,
         subject: 'Reset Password for your Chat App', // Subject line
         text: 'Click on the following link to reset password \n' + "http://localhost:3000/resetPassword/" + "\n" + tkn, // plain text body
         html: '' // html body
