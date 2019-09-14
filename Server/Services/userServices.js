@@ -44,17 +44,12 @@ exports.registration = (body, callback) => {
         firstname: body.firstname,
         lastname: body.lastname,
         email: body.email,
+        password: bcrypt.hashSync(body.password, 5),
         timestamp: (new Date())
     };
-    bcrypt.hash(body.password, 5, function (err, hash) {
-        if (err) callback("error in hashing")
-        else {
-            user.password = hash;
-            var newUser=new User(user);
-            newUser.save().then(user => callback(null, user)).catch(err => callback(err));
-        }
-    });
-    
+    var newUser = new User(user);
+    newUser.save().then(user => callback(null, user)).catch(err => callback(err));
+
 }
 /**
  * @description : Once the user is verified as existing client then an email with a link and token will be sent  
@@ -107,13 +102,17 @@ exports.resetPassword = (body, callback) => {
         callback("email not matched");
 
 }
-//
-exports.getRegisteredUsers=(req,callback)=>{
+/**
+ * @description : finds all records in database and sends responce using callback to user Controllers
+ * @param {req}, req is request from user 
+ * @param {callback}, callback is a function 
+ */
+exports.getRegisteredUsers = (req, callback) => {
     User.find().exec()
-    .then(users => {
-        if(users.length<1)
-            callback("no registered students");
-        else
-            callback(null,users)
-        }).catch(err=>callback("unable to get data error is :"+err));
+        .then(users => {
+            if (users.length < 1)
+                callback("no registered students");
+            else
+                callback(null, users)
+        }).catch(err => callback("unable to get data error is :" + err));
 }
