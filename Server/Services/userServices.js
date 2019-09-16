@@ -23,7 +23,7 @@ exports.login = (body, callback) => {
                 if (!result) { callback("Entered wrong Passwrod"); }
                 if (result) {
                     //generates a token on loggin
-                    var tkn = token.generateToken({ username: user[0].username, id: user[0]._id }, process.env.KEY, { expiresIn: "1h" });
+                    var tkn = token.generateToken({ username: user[0].username, id: user[0]._id });
                     callback(null, tkn);
                 }
             });
