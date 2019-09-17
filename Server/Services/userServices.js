@@ -83,14 +83,13 @@ exports.forgotPassword = (body, callback) => {
  * @param {req}, req is request from client 
  * @param {callback}, callback is a function in which responses from server will be passed
  */
-exports.resetPassword = (body, callback) => {
-
-    var decode = token.verifyToken(body.token);
-    if (decode.email) {
-        bcrypt.hash(body.password, 5, function (err, hashedPassword) {
+exports.resetPassword = (req, callback) => {
+    console.log(req.decode.email);
+    if (req.decode.email) {
+        bcrypt.hash(req.body.password, 5, function (err, hashedPassword) {
             if (err) callback("hashing error");
             else {
-                User.findOneAndUpdate({ email: decode.email }, { $set: { password: hashedPassword } }, { new: true }).exec()
+                User.findOneAndUpdate({ email: req.decode.email }, { $set: { password: hashedPassword,timestamp: (new Date()).toDateString() } }, { new: true }).exec()
                     .then((user) => {
                         callback(null, user)
                     })

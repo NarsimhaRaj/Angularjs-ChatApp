@@ -13,6 +13,7 @@ const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
 
 const mongoose = require('mongoose');
+require('dotenv').config();
 //var validateOptions={};
 //connecting to mongoose database
 mongoose.connect(process.env.DBCONNECTION,{useFindAndModify:false,useNewUrlParser: true,useUnifiedTopology:true, useCreateIndex :true});

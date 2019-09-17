@@ -13,19 +13,19 @@ exports.login = (req, res) => {
 
     req.getValidationResult().then((err) => {
         if (!err.isEmpty()) {
-            response.message = "Enterd details are not in correct format ";
+            response.error = "Enterd details are not in correct format ";
             res.status(422).send(response);
         }
         else {
             UserServices.login(req.body, (err, result) => {
                 if (err) {
-                    response.message = err;
+                    response.error = err;
                     res.status(404).send(response);
                 }
                 else {
                     response.data = result;
                     response.message = "successfully logged in";
-                    response.status = true;
+                    response.state = true;
                     res.status(200).send(response);
                 }
             })
@@ -50,20 +50,20 @@ exports.register = (req, res) => {
 
     req.getValidationResult().then((errors) => {
         if (!errors.isEmpty()) {
-            response.message = "Enterd details are not in correct format ";
+            response.errors = "Enterd details are not in correct format ";
             res.status(422).send(response);
         }
         else {
             
             UserServices.registration(req.body, (err, data) => {
                 if (err) {
-                    response.message = err;
+                    response.errors = err;
                     res.status(404).send(response);
                 }
                 else {
                     response.data = data;
                     response.message = "Registerd successfully";
-                    response.status = true;
+                    response.state = true;
                     res.status(200).send(response);
                 }
             });
@@ -83,19 +83,19 @@ exports.forgotPassword = (req, res) => {
     req.checkBody('email', 'Invalid Email').isEmail();
     req.getValidationResult().then((err) => {
         if (!err.isEmpty()) {
-            response.message = "invalid email";
+            response.errors = "invalid email";
             res.status(422).send(response)
         }
         else {
             //forgot password
             UserServices.forgotPassword(req.body, (err, data) => {
                 if (err) {
-                    response.message = err;
+                    response.errors = err;
                     res.status(404).send(response);
                 }
                 else {
                     response.data = data;
-                    response.status = true;
+                    response.state = true;
                     res.status(200).send(response);
                 }
             });
@@ -115,18 +115,19 @@ exports.resetPassword = (req, res) => {
     req.checkBody('password', "password length must be 8").isLength({ min: 8 }).equals(req.body.confirmPassword);
     req.getValidationResult().then((err) => {
         if (!err.isEmpty()) {
-            response.data = err; response.message = "password and confirm password not matching";
+            response.errors = err; response.message = "password and confirm password not matching";
             res.status(422).send(response)
         }
         else {
-            UserServices.resetPassword(req.body, (err, result) => {
+            console.log("hello "+req.decode.email)
+            UserServices.resetPassword(req, (err, result) => {
                 if (err) {
-                    response.data = err;
+                    response.errors = err;
                     response.message = "error occured in restting password ";
                     res.status(404).send(response);
                 }
                 else {
-                    response.status = true;
+                    response.state = true;
                     response.message = "Password has been changed "
                     response.data = result.email;
                     res.status(200).send(response);
@@ -141,7 +142,7 @@ exports.getRegisteredUsers=(req,res)=>{
     var response={}
     UserServices.getRegisteredUsers(req,(err,users)=>{
         if(err) {
-            response.message=err;
+            response.errors=err;
             res.status(422).send(response);
         }
         else {
