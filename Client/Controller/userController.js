@@ -1,8 +1,9 @@
-(function(){
-    var app=angular.module("chatapp");
-    app.controller("Controller1",loginController);
+(function () {
+    var app = angular.module("chatapp");
 
-    function loginController(service1){
-        this.token=service1.then(function(data){return data;});
+    app.controller("Controller1", loginController);
+
+    function loginController(getService) {
+        getService.then((data) => { this.details = data; });
     }
 })();
