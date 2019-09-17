@@ -2,19 +2,24 @@
 
 <head>
     <script src="angular.js"></script>
-    <script scr="app.js"></script>
+    <script src="app.js"></script>
+    <script src="Controller/userController.js"></script>
+    <script src="Services/userServices.js"></script>
 </head>
 
 <body>
     <h1>Chat App</h1>
     <div ng-controller="Controller1 as c1">
-        c1.
+        <ol ng-repeat="user in c1.details.data" type="1">
+            <li>{{user.email}}</li>
+        </ol>
+
     </div>
-    <!--<div class="div1" ng-controller="Controller2 as c2">
+    <div class="div1" ng-controller="Controller2 as c2">
         Username : <input type="text" ng-model="c2.username"/><br />
         password : <input type="password" ng-model="c2.password"/></br>
         <button ng-click="c2.signin()">singin</button>
-    </div>-->
+    </div>
 </body>
 
 </html>
