@@ -1,1 +1,1 @@
-var app=angular.model("chatapp",[]);
+var app=angular.module("chatapp",[]);
