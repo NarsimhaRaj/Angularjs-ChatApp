@@ -138,14 +138,16 @@ exports.resetPassword = (req, res) => {
 }
 
 //to get all registered users data
-exports.getRegisteredUsers=(req,res)=>{
+exports.getUsers=(req,res)=>{
     var response={}
-    UserServices.getRegisteredUsers(req,(err,users)=>{
+    UserServices.getUsers(req,(err,users)=>{
         if(err) {
+            
             response.errors=err;
             res.status(422).send(response);
         }
         else {
+            
             response.data=users;
             res.status(200).send(response)
         };
