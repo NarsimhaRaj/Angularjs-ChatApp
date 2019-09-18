@@ -63,12 +63,13 @@
                         self.confirmPassword = ""
                     }
                     else{
-                        self.errorMode=response.error;
+                        console.log(response.errors)
+                        self.errorMode=response.errors;
                     }
                 });
             this.username = ""
             this.password = ""
-            this.editMode = true;
+            //this.editMode = true;
         }
         this.chatHistory = (index) => {
             this.textArea="Helloworld"

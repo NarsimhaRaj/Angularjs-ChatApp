@@ -1,0 +1,35 @@
+<div>{{ctrl.successMode}}</div>
+<table id="tableid" align="center">
+    <tr>
+        <td>Username : </td>
+        <td><input type="text" ng-model="ctrl.username" /></td>
+    </tr>
+    <tr>
+        <td>firstname : </td>
+        <td><input type="text" ng-model="ctrl.firstname" /></td>
+    </tr>
+    <tr>
+        <td>lastname : </td>
+        <td><input type="text" ng-model="ctrl.lastname" /></td>
+    </tr>
+
+    <tr>
+        <td>email : </td>
+        <td><input type="email" ng-model="ctrl.email" /></td>
+    </tr>
+    <tr>
+        <td>password : </td>
+        <td><input type="password" ng-model="ctrl.password" /></td>
+    </tr>
+    <tr>
+        <td>confirmPassword : </td>
+        <td><input type="password" ng-model="ctrl.confirmPassword" /></td>
+    </tr>
+    <tr>
+        <td><button
+                ng-click="ctrl.register(ctrl.username,ctrl.firstname,ctrl.lastname,ctrl.email,ctrl.password,ctrl.confirmPassword)"
+                ng-hide="ctrl.editMode">save</button></td>
+        <td><button ng-hide="ctrl.editMode" ng-click="ctrl.changeMode()">back</button></td>
+    </tr>
+</table>
+</div>

@@ -1,0 +1,20 @@
+<div ng-controller="Controller as ctrl">{{ctrl.successMode}}</div>
+<table id="tableid" align="center">
+    <tr>
+        <td>Username : </td>
+        <td><input type="text" ng-model="ctrl.username" /></td>
+    </tr>
+    <tr>
+        <td>password : </td>
+        <td><input type="password" ng-model="ctrl.password" /></td>
+    </tr>
+    <tr>
+        <td>
+            <button ng-show="ctrl.editMode" ng-click="ctrl.signin(ctrl.username,ctrl.password);">singin</button>
+        </td>
+        <td>
+            <button ng-show="ctrl.editMode" ng-click="ctrl.changeMode()">signup</button>
+        </td>
+    </tr>
+</table>
+</div>

@@ -1,0 +1,37 @@
+<html ng-app="chatapp">
+
+<head>
+    <script src="../angular.js"></script>
+    <script src="../angular-route.js"></script>
+    <script src="../app.js"></script>
+    <script src="../Controller/userController.js"></script>
+    <script src="../Services/userServices.js"></script>
+</head>
+
+<body>
+    <h1 align="center">Chat App</h1>
+
+    <div ng-controller="Controller as ctrl">
+        <div align="center" id="div1" ng-if="!ctrl.successMode">
+            
+        <div align="center" ng-if="ctrl.errorMode">
+            {{ctrl.errorMode}}
+        </div>
+
+        <div ng-if="ctrl.successMode">
+
+            <div>
+                <ul ng-repeat="user in ctrl.details" type="none">
+                    <li ng-click="ctrl.chatHistory($index)">{{user.email}}</li>
+                </ul>
+            </div>
+
+            <div>
+                <div style="height:300px; width: 500px; background-color: darkgrey"></div>
+                <input type="text" ng-model="ctrl.textArea" placeholder="Enter "/><button ng-click="ctrl.send()">send</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
