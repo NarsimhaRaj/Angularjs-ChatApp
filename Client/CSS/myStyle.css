@@ -1,0 +1,12 @@
+#div1{
+    margin: 50% 50%;
+    background-color: darkcyan;
+    table-layout: auto;
+}
+
+#tableid{
+    border: 10cm, 10cm, 10cm, 10cm;
+    align-content: center;
+    border-width: 20cm;
+    border-inline-color: black;
+}

@@ -1,15 +1,29 @@
 (function () {
     var app = angular.module("chatapp");
 
-    app.service("getService", function ($http) {
-        return $http.get("http://localhost:5064/chat_app/getUsers").then(function (response) {
-            return response.data;
-        }).catch(err => console.log("link is not available "));
-    });
+    app.service("httpService", function ($http) {
+        this.getService = () => {
+            return $http.get("http://localhost:5064/chat_app/getUsers").then(function (response) {
+                return response.data;
+            },
+            function(error){
+                return error.data;
+            });
+        }
+        this.postLoginService = (user) => {
+            return $http.post("http://localhost:5064/chat_app/login", user).then(function (response) {
+                return response.data;
+            },function(error){
+                return error.data;
+            });
 
-    /*app.service("login",function($http){
-        return $http.post("http://localhost:5064/chat_app/getUsers",{"":"","":""}).then(function (response) {
-            return response.data;
-        }).catch(err => console.log("link is not available "));
-    })*/
+        }
+        this.register=(user)=>{
+            return $http.post("http://localhost:5064/chat_app/register", user).then(function (response) {
+                return response.data;
+            },function(error){
+                return error.data;
+            });
+        }
+    });
 })();
