@@ -20,17 +20,18 @@ exports.login = (req, res) => {
             UserServices.login(req.body, (err, result) => {
                 if (err) {
                     response.error = err;
+                    response.status=false;
                     res.status(404).send(response);
                 }
                 else {
                     response.data = result;
                     response.message = "successfully logged in";
-                    response.state = true;
+                    response.status = true;
                     res.status(200).send(response);
                 }
             })
         }
-    }).catch(err=>res.status(500).send("Error occured in getting validation result"));
+    }).catch(err=>res.status(500).send({error:"Error occured in getting validation result",status:false}));
 }
 //new user validation 
 /**
@@ -58,17 +59,18 @@ exports.register = (req, res) => {
             UserServices.registration(req.body, (err, data) => {
                 if (err) {
                     response.errors = err;
+                    response.status =false;
                     res.status(404).send(response);
                 }
                 else {
                     response.data = data;
                     response.message = "Registerd successfully";
-                    response.state = true;
+                    response.status = true;
                     res.status(200).send(response);
                 }
             });
         }
-    }).catch(err=>res.status(500).send("Error occured in getting validation result"))
+    }).catch(err=>res.status(500).send({error:"Error occured in getting validation result",status:false}))
 }
 //forgot Password 
 /**
@@ -84,6 +86,7 @@ exports.forgotPassword = (req, res) => {
     req.getValidationResult().then((err) => {
         if (!err.isEmpty()) {
             response.errors = "invalid email";
+            response.status =false;
             res.status(422).send(response)
         }
         else {
@@ -91,16 +94,17 @@ exports.forgotPassword = (req, res) => {
             UserServices.forgotPassword(req.body, (err, data) => {
                 if (err) {
                     response.errors = err;
+                    response.status=false;
                     res.status(404).send(response);
                 }
                 else {
                     response.data = data;
-                    response.state = true;
+                    response.status = true;
                     res.status(200).send(response);
                 }
             });
         }
-    }).catch(err=>res.status(500).send("Error occured in getting validation result"));
+    }).catch(err=>res.status(500).send({error:"Error occured in getting validation result",status:false}));
 }
 //reseting password
 /**
@@ -116,6 +120,7 @@ exports.resetPassword = (req, res) => {
     req.getValidationResult().then((err) => {
         if (!err.isEmpty()) {
             response.errors = err; response.message = "password and confirm password not matching";
+            response.status=false;
             res.status(422).send(response)
         }
         else {
@@ -123,18 +128,19 @@ exports.resetPassword = (req, res) => {
             UserServices.resetPassword(req, (err, result) => {
                 if (err) {
                     response.errors = err;
+                    response.status=false;
                     response.message = "error occured in restting password ";
                     res.status(404).send(response);
                 }
                 else {
-                    response.state = true;
+                    response.status = true;
                     response.message = "Password has been changed "
                     response.data = result.email;
                     res.status(200).send(response);
                 }
             });
         }
-    }).catch(err=>res.status(500).send("Password not as required "));
+    }).catch(err=>res.status(500).send({error:"Password not as required ",status:false}));
 }
 
 //to get all registered users data
@@ -144,10 +150,11 @@ exports.getUsers=(req,res)=>{
         if(err) {
             
             response.errors=err;
+            response.status=false;
             res.status(422).send(response);
         }
         else {
-            
+            response.status=true;
             response.data=users;
             res.status(200).send(response)
         };
