@@ -45,7 +45,8 @@ exports.registration = (body, callback) => {
         lastname: body.lastname,
         email: body.email,
         password: bcrypt.hashSync(body.password, 5),
-        timestamp: (new Date())
+        joined : new Date().toUTCString(),
+        updated : new Date().toUTCString()
     };
     var newUser = new User(user);
     newUser.save().then(user => callback(null, user)).catch(err => callback(err));
@@ -89,7 +90,7 @@ exports.resetPassword = (req, callback) => {
         bcrypt.hash(req.body.password, 5, function (err, hashedPassword) {
             if (err) callback("hashing error");
             else {
-                User.findOneAndUpdate({ email: req.decode.email }, { $set: { password: hashedPassword,timestamp: (new Date()).toDateString() } }, { new: true }).exec()
+                User.findOneAndUpdate({ email: req.decode.email }, { $set: { password: hashedPassword,updated: (new Date()).toUTCString() } }, { new: true }).exec()
                     .then((user) => {
                         callback(null, user)
                     })
@@ -106,12 +107,13 @@ exports.resetPassword = (req, callback) => {
  * @param {req}, req is request from user 
  * @param {callback}, callback is a function 
  */
-exports.getRegisteredUsers = (req, callback) => {
+exports.getUsers = (req, callback) => {
     User.find().exec()
         .then(users => {
             if (users.length < 1)
                 callback("no registered students");
-            else
+            else{
                 callback(null, users)
+            }
         }).catch(err => callback("unable to get data error is :" + err));
 }
