@@ -1,0 +1,37 @@
+<h1 class="chatApp">Welcome To Chat App</h1>
+<div class="signing" align="center">
+    <table id="tableid" align="center">
+        <tr>
+            <td>Username : </td>
+            <td><input type="text" ng-model="ctrl.username" placeholder="Enter your name" required/></td>
+        </tr>
+        <tr>
+            <td>password : </td>
+            <td><input id="password" type="password" ng-model="ctrl.password"/ placeholder="Enter password" required></td>
+        </tr>
+        <tr>
+            <td>
+                <button ng-click="ctrl.singin(ctrl.username,ctrl.password)" required>singin</button>
+            </td>
+            <td>
+                <button ng-click="ctrl.redirectToForgotPassword()" required>forgotPassword</button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="errorCode" ng-if="ctrl.errorMode" required>{{ctrl.errorMode}}</div>
+            </td>
+        </tr>
+    </table>
+    New to ChatApp -> Click 
+    <button ng-click="ctrl.redirectToRegister()">signup</button>
+</div>
+<script>
+    var input = document.getElementById("password");
+    input.addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("signin").click();
+        }
+    });
+</script>

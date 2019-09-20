@@ -1,16 +1,16 @@
 (function () {
-    var app = angular.module("chatapp");
+    var app = angular.module("chatApp");
 
-    app.controller("Controller", Main);
+    app.controller("mainController", Main);
 
-    function Main(httpService) {
+    function Main($location, httpService) {
         var self = this;
         this.editMode = true;
         this.successMode = undefined;
         this.errorMode = undefined;
         this.username = "";
         this.password = "";
-        this.textArea="";
+        this.textArea = "";
         httpService.getService()
             .then((response) => {
                 if (response.status)
@@ -21,18 +21,19 @@
 
         this.changeMode = () => {
             self.editMode = !self.editMode;
-            this.successMode=undefined;
-            this.errorMode=undefined;
+            this.successMode = undefined;
+            this.errorMode = undefined;
         }
 
-        this.signin = function (name, password) {
-            var user = { username: name, password: password }
-            httpService.postLoginService(user).then(function (response) {
-                console.log(response.status)
+        this.singin = function (name, password) {
+            this.user = { username: name, password: password }
+            httpService.postLoginService(this.user).then(function (response) {
                 if (response.status) {
-                    console.log(response)
-                    self.logindetails = response.data
-                    self.successMode = response.message;
+                    
+                    self.successMode=response.message;
+                    console.log(self.successMode);
+                    alert(response.message);
+                    $location.path("/chat");
                 }
                 else {
                     self.errorMode = response.error;
@@ -54,25 +55,41 @@
             httpService.register(user)
                 .then(function (response) {
                     if (response.status) {
-                        self.successRegister = response.message;
+                        self.successMode = response.message;
                         self.username = ""
                         self.firstname = ""
                         self.lastname = ""
                         self.email = ""
                         self.password = ""
                         self.confirmPassword = ""
+                        alert(response.message);
+                        $location.path("/login");
                     }
-                    else{
-                        console.log(response.errors)
-                        self.errorMode=response.errors;
+                    else {
+                        
+                        self.errorMode = response.errors;
                     }
                 });
             this.username = ""
             this.password = ""
-            //this.editMode = true;
+            //  this.editMode = true;
+        }
+        this.forgotPassword=function(email){
+            httpService.forgotPassword({email:email}).then((response)=>{
+                if(response.status)
+                    self.successMode=response.message;
+                else    
+                    self.errorMode=response.errors;
+            })
+        }
+        this.redirectToRegister = function () {
+            $location.path("/register");
+        }
+        this.redirectToForgotPassword=function(){
+            $location.path('/forgotPassword');
         }
         this.chatHistory = (index) => {
-            this.textArea="Helloworld"
+            this.textArea = "Helloworld"
         }
         this.send = () => {
 

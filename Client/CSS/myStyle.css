@@ -1,12 +1,88 @@
-#div1{
-    margin: 50% 50%;
-    background-color: darkcyan;
-    table-layout: auto;
-}
-
 #tableid{
-    border: 10cm, 10cm, 10cm, 10cm;
+    border-collapse: separate;
+    border-spacing: 10px 30px;
+    background-color: cornsilk;
+    margin: 5px 5px;
+    border-width : 10px;
+}
+.signing{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    text-emphasis: solid;
+    border-spacing: 30px;
+    outline-color: black;
+    border-style: inset;
+    border-width: 7px;
+    position : absolute;
+    left:40%;
+    top:15%;
+
+}
+.errorCode{
+    background-color: tomato;
+    text-emphasis-color: tomato;
+    text-align: center;
+    position: absolute;
+    display: inline-block;
+    border-color:#c7162b;
+    color:#fff
+}
+.successCode{
+    text-align: center;
+    position: absolute;
+    background-color:#0e8420;
+    border-color:#0e8420;
+    color:#fff
+}
+.contacts{
+    float:left;
+    width:33.33%;
+    position: absolute;
+    /* scroll-margin: initial; */
+    overflow-y: scroll;
+    height: 400px;
+}
+.messageArea{
+    display: list-item;
+    float: right;
+    width:66%;
+    position: relative;
     align-content: center;
-    border-width: 20cm;
-    border-inline-color: black;
+    border-style: inset;
+}
+button{
+    text-size-adjust: solid;
+    padding: 5px 20px;
+    text-align: center;
+    margin: 3px 2px;
+    cursor: pointer;
+    color: white;
+    background-color: black;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+    text-emphasis: solid;
+    align-content: center;
+}
+.chatApp{
+    animation-name: animate;
+    animation-duration: 15s;
+    position: absolute;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+@keyframes animate {
+    from {transform: translateX(0px);}
+    to {transform: translateX(1000px);}
+  }
+
+.chatHistory{
+    width: 610px;
+    height: 400px;
+    background-color: darkgrey;
+    border-style: outset;
+}
+li{
+    padding:15px;
+    background-color: cornflowerblue;
+    color: white;
 }

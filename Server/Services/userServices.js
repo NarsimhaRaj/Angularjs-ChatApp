@@ -59,13 +59,13 @@ exports.registration = (body, callback) => {
  */
 exports.forgotPassword = (body, callback) => {
     User.find({ email: body.email }).exec().then(user => {
-        if (user.length < 1) callback("user not found");
+        if (user.length < 1) callback("entered email is not found");
         else {
             var tkn = token.generateToken({ email: body.email });
 
             mail.sendMail(body, tkn, (error, response) => {
                 if (error)
-                    callback("could not sent mail");
+                    callback("could not sent mail, due to some technical error ");
                 else
                     callback(null, response);
             });

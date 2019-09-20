@@ -100,6 +100,7 @@ exports.forgotPassword = (req, res) => {
                 else {
                     response.data = data;
                     response.status = true;
+                    response.message="reset Password link has sent to your registeredMail"
                     res.status(200).send(response);
                 }
             });
