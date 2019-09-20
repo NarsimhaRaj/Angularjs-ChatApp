@@ -3,6 +3,12 @@
 
     app.controller("mainController", Main);
 
+    var socket=io.connect("http://localhost:5064");
+
+    app.value("sender","");
+    
+    var sender="";
+
     function Main($location, httpService) {
         var self = this;
         this.editMode = true;
@@ -11,6 +17,8 @@
         this.username = "";
         this.password = "";
         this.textArea = "";
+        this.username ="";
+        this.flag=false;
         httpService.getService()
             .then((response) => {
                 if (response.status)
@@ -26,12 +34,12 @@
         }
 
         this.singin = function (name, password) {
+            sender=name;
             this.user = { username: name, password: password }
             httpService.postLoginService(this.user).then(function (response) {
                 if (response.status) {
-                    
+                    self.username=name;
                     self.successMode=response.message;
-                    console.log(self.successMode);
                     alert(response.message);
                     $location.path("/chat");
                 }
@@ -88,11 +96,17 @@
         this.redirectToForgotPassword=function(){
             $location.path('/forgotPassword');
         }
-        this.chatHistory = (index) => {
-            this.textArea = "Helloworld"
+        this.chatHistory = (receiver,index) => {
+            this.flag=true;
+            this.receiver=receiver;
         }
-        this.send = () => {
-
+        this.send = (message) => {
+            var chatData={sender:sender,receiver:this.receiver,message:message}
+            socket.emit("chat",chatData);
         }
+        socket.on('chat',function(response){
+            document.getElementById('chatWindow').innerHTML=response.message.messages;
+            console.log(response);
+        })
     }
 })();

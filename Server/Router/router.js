@@ -19,4 +19,7 @@ router.post('/resetPassword',verify.verifyToken,UserController.resetPassword);
 //get all registered users
 router.get('/getUsers',UserController.getUsers);
 
+
+// router.post('/chatData',UserController.chatConversation);
+
 module.exports = router;

@@ -1,16 +1,16 @@
-<h1 align="center">Sucessfully logged in </h1>
+<h1 align="center">Welcome To Chat App {{sender}}</h1>
 <h3>CONTACT DETAILS</h3>
 <div>
     <div class="contacts">
         <ul ng-repeat="user in ctrl.details" type="none">
-            <li ng-click="ctrl.chatHistory($index)">{{user.username}}</li>
+            <li ng-click="ctrl.chatHistory(user.email)">{{user.username}}</li>
         </ul>
     </div>
-    <div class="messageArea">
-        <div class="chatHistory">
+    <div class="messageArea" ng-if="ctrl.flag">
+        <div class="chatHistory" id="chatWindow">
 
         </div>
         <textarea rows="2" cols="70" type="text" ng-model="ctrl.textArea" placeholder="Enter messages here "></textarea>
-        <button ng-click="ctrl.send()">send</button>
+        <button ng-click="ctrl.send(ctrl.textArea)">send</button>
     </div>
 </div>

@@ -32,5 +32,12 @@
             return error.data;
         })
         }
+        this.chatData=(chatMessages)=>{
+            return $http.post('http://localhost:5064/chat_app/chatData',chatMessages).then(function(response){
+                    return response.data;
+            },function(error){
+                return error.data;
+            })
+        }
     });
 })();

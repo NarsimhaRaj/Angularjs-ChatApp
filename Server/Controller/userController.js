@@ -20,7 +20,7 @@ exports.login = (req, res) => {
             UserServices.login(req.body, (err, result) => {
                 if (err) {
                     response.error = err;
-                    response.status=false;
+                    response.status = false;
                     res.status(404).send(response);
                 }
                 else {
@@ -31,7 +31,7 @@ exports.login = (req, res) => {
                 }
             })
         }
-    }).catch(err=>res.status(500).send({error:"Error occured in getting validation result",status:false}));
+    }).catch(err => res.status(500).send({ error: "Error occured in getting validation result", status: false }));
 }
 //new user validation 
 /**
@@ -55,11 +55,11 @@ exports.register = (req, res) => {
             res.status(422).send(response);
         }
         else {
-            
+
             UserServices.registration(req.body, (err, data) => {
                 if (err) {
                     response.errors = err;
-                    response.status =false;
+                    response.status = false;
                     res.status(404).send(response);
                 }
                 else {
@@ -70,7 +70,7 @@ exports.register = (req, res) => {
                 }
             });
         }
-    }).catch(err=>res.status(500).send({error:"Error occured in getting validation result",status:false}))
+    }).catch(err => res.status(500).send({ error: "Error occured in getting validation result", status: false }))
 }
 //forgot Password 
 /**
@@ -86,7 +86,7 @@ exports.forgotPassword = (req, res) => {
     req.getValidationResult().then((err) => {
         if (!err.isEmpty()) {
             response.errors = "invalid email";
-            response.status =false;
+            response.status = false;
             res.status(422).send(response)
         }
         else {
@@ -94,18 +94,18 @@ exports.forgotPassword = (req, res) => {
             UserServices.forgotPassword(req.body, (err, data) => {
                 if (err) {
                     response.errors = err;
-                    response.status=false;
+                    response.status = false;
                     res.status(404).send(response);
                 }
                 else {
                     response.data = data;
                     response.status = true;
-                    response.message="reset Password link has sent to your registeredMail"
+                    response.message = "reset Password link has sent to your registeredMail"
                     res.status(200).send(response);
                 }
             });
         }
-    }).catch(err=>res.status(500).send({error:"Error occured in getting validation result",status:false}));
+    }).catch(err => res.status(500).send({ error: "Error occured in getting validation result", status: false }));
 }
 //reseting password
 /**
@@ -115,21 +115,21 @@ exports.forgotPassword = (req, res) => {
  */
 exports.resetPassword = (req, res) => {
 
-    var response ={};
+    var response = {};
 
     req.checkBody('password', "password length must be 8").isLength({ min: 8 }).equals(req.body.confirmPassword);
     req.getValidationResult().then((err) => {
         if (!err.isEmpty()) {
             response.errors = err; response.message = "password and confirm password not matching";
-            response.status=false;
+            response.status = false;
             res.status(422).send(response)
         }
         else {
-            console.log("hello "+req.decode.email)
+            console.log("hello " + req.decode.email)
             UserServices.resetPassword(req, (err, result) => {
                 if (err) {
                     response.errors = err;
-                    response.status=false;
+                    response.status = false;
                     response.message = "error occured in restting password ";
                     res.status(404).send(response);
                 }
@@ -141,23 +141,44 @@ exports.resetPassword = (req, res) => {
                 }
             });
         }
-    }).catch(err=>res.status(500).send({error:"Password not as required ",status:false}));
+    }).catch(err => res.status(500).send({ error: "Password not as required ", status: false }));
 }
 
 //to get all registered users data
-exports.getUsers=(req,res)=>{
-    var response={}
-    UserServices.getUsers(req,(err,users)=>{
-        if(err) {
-            
-            response.errors=err;
-            response.status=false;
+exports.getUsers = (req, res) => {
+    var response = {}
+    UserServices.getUsers(req, (err, users) => {
+        if (err) {
+
+            response.errors = err;
+            response.status = false;
             res.status(422).send(response);
         }
         else {
-            response.status=true;
-            response.data=users;
+            response.status = true;
+            response.data = users;
             res.status(200).send(response)
         };
     });
+}
+
+exports.chatConversation = (chatData,callback) => {
+
+    var response={};
+    return UserServices.chatConversation(chatData, (err, data) => {
+        if (err) {
+            response.error = "Some error occured ";
+            response.status = false;
+            //res.send(response);
+            callback(response)
+        }
+        else {
+            response.message = data;
+            response.status = true;
+            //res.send(response);
+            // return response;
+            callback(null,response)
+        }
+
+    })
 }

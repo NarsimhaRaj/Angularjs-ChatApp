@@ -8,9 +8,11 @@
  */
 const express = require('express');
 const app = express();
+const socket=require('socket.io');
 const Router = require('./Router/router');
 const bodyParser = require('body-parser');
 const expressValidator = require('express-validator');
+const UserController=require('../Server/Controller/userController');
 
 const mongoose = require('mongoose');
 require('dotenv').config();
@@ -42,7 +44,33 @@ app.use(function(req, res, next) {
     next();
 });
 app.use('/chat_app', Router);
-const port = 5064
-app.listen(port,()=>{
+
+const port = process.env.PORT || 5064
+var server=app.listen(port,()=>{
     console.log("listening on port "+port);
 });
+
+const io=socket(server);
+app.use(express.static('../Client'));
+io.on('connection', function(socket){
+    console.log("connected to socket")
+    socket.on('disconnect', function() {
+        console.log("disconnected")
+        });
+        socket.on('chat', function(data) { 
+           var data2 = UserController.chatConversation(data,(err,response)=>{
+               if(response.status){
+                socket.emit('chat',response);
+               }
+           })
+            
+        });
+    // connection.push(socket);
+    // console.log('%s user connected',connection.length);
+    // socket.on('disconnect',function(data){
+    //     connection.splice(connection.indexOf(socket),1);
+    //     console.log("1 user disconnected, connected users %s ",connection.length);
+    // })
+});
+
+

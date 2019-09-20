@@ -1,6 +1,7 @@
 const User = require('../App/Model/userModel');
 const token = require('../Middleware/token');
 const mail = require('../Middleware/mail');
+const Chat = require('../App/Model/chatModel')
 require('dotenv').config();
 
 const bcrypt = require('bcrypt');
@@ -45,8 +46,8 @@ exports.registration = (body, callback) => {
         lastname: body.lastname,
         email: body.email,
         password: bcrypt.hashSync(body.password, 5),
-        joined : new Date().toUTCString(),
-        updated : new Date().toUTCString()
+        joined: new Date().toUTCString(),
+        updated: new Date().toUTCString()
     };
     var newUser = new User(user);
     newUser.save().then(user => callback(null, user)).catch(err => callback(err));
@@ -90,7 +91,7 @@ exports.resetPassword = (req, callback) => {
         bcrypt.hash(req.body.password, 5, function (err, hashedPassword) {
             if (err) callback("hashing error");
             else {
-                User.findOneAndUpdate({ email: req.decode.email }, { $set: { password: hashedPassword,updated: (new Date()).toUTCString() } }, { new: true }).exec()
+                User.findOneAndUpdate({ email: req.decode.email }, { $set: { password: hashedPassword, updated: (new Date()).toUTCString() } }, { new: true }).exec()
                     .then((user) => {
                         callback(null, user)
                     })
@@ -112,8 +113,33 @@ exports.getUsers = (req, callback) => {
         .then(users => {
             if (users.length < 1)
                 callback("no registered students");
-            else{
+            else {
                 callback(null, users)
             }
-        }).catch(err => callback("unable to get data error is :" + err));
+        }).catch(err => callback("unable to get data, error is :" + err));
+}
+
+exports.chatConversation = (chatData, callback) => {
+    var fromTO = {
+        $or: [{ sender: chatData.sender, receiver: chatData.receiver },
+        { sender: chatData.receiver, receiver: chatData.sender }
+        ]
+    };
+    Chat.findOne(fromTO)
+        .then((data) => {
+            let tempMessages = data.messages;
+            tempMessages.push(chatData.message);
+            Chat.findOneAndUpdate(fromTO, { $set: { messages: tempMessages } }, { new: true })
+                .then((result) => {
+                    callback(null, result)
+                }).catch((err) => {
+                    callback("error is here")
+                })
+        }).catch(() => {
+            var array = new Array();
+            array.push(chatData.message);
+            var chat = new Chat({ sender: chatData.sender, receiver: chatData.receiver, messages: array });
+            chat.save();
+            callback(null, chat);
+        })
 }
