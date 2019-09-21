@@ -3,6 +3,8 @@
 
     app.controller("mainController", Main);
 
+    var socket=io.connect("http://localhost:5064");
+
     app.value("sender", "");
 
     var sender = null;
@@ -83,26 +85,23 @@
         this.chatHistory = (receiver) => {
             this.flag = true;
             this.receiver = receiver;
-            httpService.fetchConversation({ sender: sender, receiver: this.receiver}).then(response=>{
-                if(response.status){
+            httpService.fetchConversation({ sender: sender, receiver: this.receiver}).then((response)=>{
+                if(response.status)
                     this.messages=response.message.messages;
-                }
-                else    
+                else
                     this.messages=response.error;
+            });
+            socket.on('receiving',function(responseMessage){
+                this.messages.push(responseMessage);
+               console.log(this.messages); 
             })
         }
         
         this.send = (message) => {
             var chatData = { sender: sender, receiver: this.receiver, message: message }
-            httpService.chating(chatData);
-            httpService.fetchConversation({ sender: sender, receiver: this.receiver}).then(response=>{
-                if(response.status){
-                    this.messages=response.message.messages;
-                }
-                else    
-                    this.messages=response.error;
-            })
+            socket.emit('sending',chatData);
         }
+        
 
         //redirect to register page on clicking register button
         this.redirectToRegister = function () {

@@ -90,19 +90,22 @@ li{
 }
 li:hover{
     color: black;
-    background-color: green;
+    background-color: blanchedalmond;
 }
 #even{
-    float:left;
     padding:10px;
-    position: relative;
+    background-color: antiquewhite;
+    color: black;
+
+    border-color: aliceblue;
 
 }
 #odd{
-    float: right;
-    padding:10px;
-    position: relative;
+    padding: 10px;
+    color:#3c763d;
+    background-color:#dff0d8;
+    border-color:#d6e9c6;
+    text-align: right
 }
 .messages{
-    display: inline;
 }

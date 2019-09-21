@@ -1,7 +1,6 @@
 (function () {
     var app = angular.module("chatApp");
 
-    var socket=io.connect("http://localhost:5064");
 
     app.service("httpService",function ($http,$location) {
           this.getService = () => {
@@ -41,9 +40,6 @@
         },function(error){
             return error.data;
         })
-        }
-        this.chating=(chatData)=>{
-            socket.emit("sending",chatData);
         }
     });
 })();

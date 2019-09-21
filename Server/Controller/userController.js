@@ -187,7 +187,7 @@ exports.fetchConversation=(req,res)=>{
     var response={}
     UserServices.fetchConversation(req.body,(err,data)=>{
         if (err) {
-            response.error = err;
+            response.error = [err];
             response.status = false;
             //res.send(response);
             res.status(404).send(response);

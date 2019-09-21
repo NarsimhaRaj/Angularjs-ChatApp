@@ -155,7 +155,6 @@ exports.fetchConversation = (body, callback) => {
     Chat.findOne(fromTO)
         .then((data) => {
             if(data){
-                console.log(data);
                 callback(null, data)
         }
         else{

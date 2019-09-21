@@ -58,12 +58,8 @@ io.on('connection', function(socket){
         console.log("disconnected")
         });
         socket.on('sending', function(data) { 
-           UserController.chatConversation(data,(err,response)=>{
-               if(response.status){
-                    console.log("message recieved");
-               }
-           })
-            
+           UserController.chatConversation(data);
+           io.sockets.in(data.receiver).emit("receiving",data.message);
         });
     // connection.push(socket);
     // console.log('%s user connected',connection.length);
