@@ -20,6 +20,6 @@ router.post('/resetPassword',verify.verifyToken,UserController.resetPassword);
 router.get('/getUsers',UserController.getUsers);
 
 
-// router.post('/chatData',UserController.chatConversation);
+router.post('/fetchConversation',UserController.fetchConversation);
 
 module.exports = router;

@@ -8,7 +8,7 @@ const UserServices = require('../Services/userServices');
  */
 exports.login = (req, res) => {
     var response = {}
-    req.checkBody('username', 'Invalid Username').isString().trim().isLength({ min: 2 });
+    req.checkBody('email', 'Invalid Username').isEmail();
     req.checkBody('password', 'Invalid password').isLength({ min: 8 });
 
     req.getValidationResult().then((err) => {
@@ -165,7 +165,7 @@ exports.getUsers = (req, res) => {
 exports.chatConversation = (chatData,callback) => {
 
     var response={};
-    return UserServices.chatConversation(chatData, (err, data) => {
+    UserServices.chatConversation(chatData, (err, data) => {
         if (err) {
             response.error = "Some error occured ";
             response.status = false;
@@ -181,4 +181,23 @@ exports.chatConversation = (chatData,callback) => {
         }
 
     })
+}
+
+exports.fetchConversation=(req,res)=>{
+    var response={}
+    UserServices.fetchConversation(req.body,(err,data)=>{
+        if (err) {
+            response.error = err;
+            response.status = false;
+            //res.send(response);
+            res.status(404).send(response);
+        }
+        else {
+            response.message = data;
+            response.status = true;
+            //res.send(response);
+            // return response;
+            res.status(200).send(response);
+        }
+    });
 }

@@ -1,7 +1,6 @@
 #tableid{
     border-collapse: separate;
     border-spacing: 10px 30px;
-    background-color: cornsilk;
     margin: 5px 5px;
     border-width : 10px;
 }
@@ -10,8 +9,8 @@
     text-emphasis: solid;
     border-spacing: 30px;
     outline-color: black;
-    border-style: inset;
-    border-width: 7px;
+    border-style: none;
+    border-width: 2px;
     position : absolute;
     left:40%;
     top:15%;
@@ -41,6 +40,7 @@
     overflow-y: scroll;
     height: 400px;
 }
+
 .messageArea{
     display: list-item;
     float: right;
@@ -87,4 +87,22 @@ li{
     padding:15px;
     background-color: lightgray;
     color: black;
+}
+li:hover{
+    color: black;
+    background-color: green;
+}
+#even{
+    float:left;
+    padding:10px;
+    position: relative;
+
+}
+#odd{
+    float: right;
+    padding:10px;
+    position: relative;
+}
+.messages{
+    display: inline;
 }

@@ -8,7 +8,10 @@
     </div>
     <div class="messageArea" ng-if="ctrl.flag">
         <div class="chatHistory" id="chatWindow">
-
+            <div ng-repeat="msg in ctrl.messages track by $index">
+                <div id="even" ng-if="$index%2==0">{{msg}}</div>
+                <div id="odd" ng-if="$index%2==1" >{{msg}}</div>
+            </div>
         </div>
         <textarea rows="2" cols="70" type="text" ng-model="ctrl.textArea" placeholder="Enter messages here "></textarea>
         <button ng-click="ctrl.send(ctrl.textArea)">send</button>

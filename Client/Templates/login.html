@@ -3,7 +3,7 @@
     <table id="tableid" align="center">
         <tr>
             <td>Username : </td>
-            <td><input type="text" ng-model="ctrl.username" placeholder="Enter your name" required/></td>
+            <td><input type="text" ng-model="ctrl.email" placeholder="Enter your email" required/></td>
         </tr>
         <tr>
             <td>password : </td>
@@ -11,7 +11,7 @@
         </tr>
         <tr>
             <td>
-                <button ng-click="ctrl.singin(ctrl.username,ctrl.password)" required>singin</button>
+                <button ng-click="ctrl.singin(ctrl.email,ctrl.password)" required>singin</button>
             </td>
             <td>
                 <button ng-click="ctrl.redirectToForgotPassword()" required>forgotPassword</button>

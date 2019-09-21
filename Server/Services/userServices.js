@@ -13,8 +13,8 @@ const bcrypt = require('bcrypt');
  */
 //exporting user valid details
 exports.login = (body, callback) => {
-    var username = body.username
-    User.find({ username: username }).exec().then(user => {
+    var email = body.email
+    User.find({ email: email }).exec().then(user => {
 
         if (user.length < 1)
             callback("Entered wrong username")
@@ -24,7 +24,7 @@ exports.login = (body, callback) => {
                 if (!result) { callback("Entered wrong Passwrod"); }
                 if (result) {
                     //generates a token on loggin
-                    var tkn = token.generateToken({ username: user[0].username, id: user[0]._id });
+                    var tkn = token.generateToken({ email: user[0].email });
                     callback(null, tkn);
                 }
             });
@@ -127,19 +127,41 @@ exports.chatConversation = (chatData, callback) => {
     };
     Chat.findOne(fromTO)
         .then((data) => {
+            if(chatData.message!="" || chatData!=null ||chatData!=undefined){
             let tempMessages = data.messages;
             tempMessages.push(chatData.message);
             Chat.findOneAndUpdate(fromTO, { $set: { messages: tempMessages } }, { new: true })
                 .then((result) => {
                     callback(null, result)
                 }).catch((err) => {
-                    callback("error is here")
+                    callback("could not update your messages")
                 })
+            }
+            else
+                callback("Enter any message");
         }).catch(() => {
-            var array = new Array();
-            array.push(chatData.message);
-            var chat = new Chat({ sender: chatData.sender, receiver: chatData.receiver, messages: array });
+            var chat = new Chat({ sender: chatData.sender, receiver: chatData.receiver, messages: [chatData.message] });
             chat.save();
             callback(null, chat);
+
+        })
+}
+exports.fetchConversation = (body, callback) => {
+    var fromTO = {
+        $or: [{ sender: body.sender, receiver: body.receiver },
+        { sender: body.receiver, receiver: body.sender }
+        ]
+    };
+    Chat.findOne(fromTO)
+        .then((data) => {
+            if(data){
+                console.log(data);
+                callback(null, data)
+        }
+        else{
+            callback("NO messages show")
+        }
+    }).catch((err) => {
+            callback("NO Messages to show " + err);
         })
 }

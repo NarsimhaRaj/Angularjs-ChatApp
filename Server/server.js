@@ -57,10 +57,10 @@ io.on('connection', function(socket){
     socket.on('disconnect', function() {
         console.log("disconnected")
         });
-        socket.on('chat', function(data) { 
-           var data2 = UserController.chatConversation(data,(err,response)=>{
+        socket.on('sending', function(data) { 
+           UserController.chatConversation(data,(err,response)=>{
                if(response.status){
-                socket.emit('chat',response);
+                    console.log("message recieved");
                }
            })
             

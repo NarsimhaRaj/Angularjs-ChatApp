@@ -1,6 +1,8 @@
 (function () {
     var app = angular.module("chatApp");
 
+    var socket=io.connect("http://localhost:5064");
+
     app.service("httpService",function ($http,$location) {
           this.getService = () => {
             return $http.get("http://localhost:5064/chat_app/getUsers").then(function (response) {
@@ -32,12 +34,16 @@
             return error.data;
         })
         }
-        this.chatData=(chatMessages)=>{
-            return $http.post('http://localhost:5064/chat_app/chatData',chatMessages).then(function(response){
-                    return response.data;
-            },function(error){
-                return error.data;
-            })
+
+        this.fetchConversation=(chatData)=>{
+            return $http.post("http://localhost:5064/chat_app/fetchConversation",chatData).then(function(response){
+                return response.data
+        },function(error){
+            return error.data;
+        })
+        }
+        this.chating=(chatData)=>{
+            socket.emit("sending",chatData);
         }
     });
 })();
