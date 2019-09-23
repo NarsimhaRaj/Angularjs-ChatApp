@@ -1,5 +1,5 @@
 var app = angular.module("chatApp", ["ngRoute"]);
-app.config(["$routeProvider",function ($routeProvider) {
+app.config(["$routeProvider", function ($routeProvider) {
     $routeProvider
         .when('/', {
             templateUrl: 'Templates/login.html',
@@ -12,9 +12,20 @@ app.config(["$routeProvider",function ($routeProvider) {
         .when('/chat', {
             templateUrl: 'Templates/chat.html',
             controller: 'mainController as ctrl'
-        }).when('/forgotPassword',{
+        }).when('/forgotPassword', {
             templateUrl: 'Templates/forgotPassword.html',
             controller: 'mainController as ctrl'
+        }).when('/resetPassword/:token', {
+            templateUrl: 'Templates/resetPassword.html',
+            controller: "mainController as ctrl",
+            resolve: {
+                result: function ($route) {
+                    token = $route.current.params.token;
+                    if (token)
+                        return true;
+                    return false;
+                }
+            }
         })
         .otherwise({
             redirectTo: '/'
