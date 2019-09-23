@@ -6,8 +6,10 @@ require('dotenv').config();
  */
 exports.verifyToken = (req,res,next) => {
     var token=req.header("authentication");
+    //console.log(token)
+    // var token =req.params.token;
     if(!token){
-        return res.status().send("no token available");
+        return res.status(404).send({error:"Invalid Link",status:false});
         
     }try{
         req.decode=jwt.verify(token,process.env.KEY);
@@ -15,7 +17,7 @@ exports.verifyToken = (req,res,next) => {
     }
     catch(err){
     
-        res.status(404).send("token invalid");
+        res.status(404).send({error:"Invalid Autherization",status:false});
     }
 }
 
