@@ -15,7 +15,7 @@ exports.sendMail=(body,tkn,callback)=>{
         from: process.env.EMAIL,
         to: body.email,
         subject: 'Reset Password for your Chat App', // Subject line
-        text: 'Click on the following link to reset password \n' + "http://localhost:3000/resetPassword/" + "\n" + tkn, // plain text body
+        text: 'Click on the following link to reset password \n' + "http://localhost:5064/#!/resetPassword/" + tkn, // plain text body
         html: '' // html body
     };
 
