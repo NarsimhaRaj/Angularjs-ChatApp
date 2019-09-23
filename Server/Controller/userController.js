@@ -51,14 +51,14 @@ exports.register = (req, res) => {
 
     req.getValidationResult().then((errors) => {
         if (!errors.isEmpty()) {
-            response.errors = "Enterd details are not in correct format ";
+            response.error = "Enterd details are not in correct format ";
             res.status(422).send(response);
         }
         else {
 
             UserServices.registration(req.body, (err, data) => {
                 if (err) {
-                    response.errors = err;
+                    response.error = err;
                     response.status = false;
                     res.status(404).send(response);
                 }
@@ -85,7 +85,7 @@ exports.forgotPassword = (req, res) => {
     req.checkBody('email', 'Invalid Email').isEmail();
     req.getValidationResult().then((err) => {
         if (!err.isEmpty()) {
-            response.errors = "invalid email";
+            response.error = "invalid email";
             response.status = false;
             res.status(422).send(response)
         }
@@ -93,7 +93,7 @@ exports.forgotPassword = (req, res) => {
             //forgot password
             UserServices.forgotPassword(req.body, (err, data) => {
                 if (err) {
-                    response.errors = err;
+                    response.error = err;
                     response.status = false;
                     res.status(404).send(response);
                 }
@@ -109,7 +109,8 @@ exports.forgotPassword = (req, res) => {
 }
 //reseting password
 /**
- * @description : validate the password only if length is minimum 8 and conifrm password matches 
+ * @description : validate the password only if length is minimum 8 and conifrm password matches, if no errors calls resetpassword
+ * function in Userservices and finds user data in database and updates password  
  * @param {req}, req is request from client 
  * @param {callback}, callback is a function in which responses from server will be passed
  */
@@ -120,7 +121,7 @@ exports.resetPassword = (req, res) => {
     req.checkBody('password', "password length must be 8").isLength({ min: 8 }).equals(req.body.confirmPassword);
     req.getValidationResult().then((err) => {
         if (!err.isEmpty()) {
-            response.errors = err; response.message = "password and confirm password not matching";
+            response.error = "password and confirm password not matching";
             response.status = false;
             res.status(422).send(response)
         }
@@ -128,9 +129,8 @@ exports.resetPassword = (req, res) => {
             console.log("hello " + req.decode.email)
             UserServices.resetPassword(req, (err, result) => {
                 if (err) {
-                    response.errors = err;
                     response.status = false;
-                    response.message = "error occured in restting password ";
+                    response.error = "can not reset password due to some technical error, we are working on it";
                     res.status(404).send(response);
                 }
                 else {
@@ -150,7 +150,7 @@ exports.getUsers = (req, res) => {
     UserServices.getUsers(req, (err, users) => {
         if (err) {
 
-            response.errors = err;
+            response.error = err;
             response.status = false;
             res.status(422).send(response);
         }
@@ -162,6 +162,11 @@ exports.getUsers = (req, res) => {
     });
 }
 
+/**
+ * @description : passes chatData to chatConversation function in Userservices, if the converation exist then returns with 
+ * data otherwise returns error
+ * @param {chatData}, it's a object contains sender, receiver and message 
+ */
 exports.chatConversation = (chatData,callback) => {
 
     var response={};
@@ -182,12 +187,15 @@ exports.chatConversation = (chatData,callback) => {
 
     })
 }
-
+/**
+ * @description: fetches conversation if sender and receiver conversation exist, if not send a error message.
+ * request body holds sender and receiver emails
+ */
 exports.fetchConversation=(req,res)=>{
     var response={}
     UserServices.fetchConversation(req.body,(err,data)=>{
         if (err) {
-            response.error = [err];
+            response.error = [{message:err}];
             response.status = false;
             //res.send(response);
             res.status(404).send(response);
