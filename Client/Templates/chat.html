@@ -8,11 +8,10 @@
     </div>
     <div class="messageArea" ng-if="ctrl.flag">
         <div class="chatHistory" id="chatWindow">
-            <ul class="messages" ng-repeat="msg in ctrl.messages track by $index" type="none">
-                <li id="even" ng-if="msg.sentby==sender">{{msg.message}}</li> 
-                <li id="odd" ng-if="msg.sentby==ctrl.receiver" >{{msg.message}}</li>
+            <ul class="messages" ng-repeat="msg in ctrl.messagesPacket track by $index" type="none">
+                <li id="alignLeft" ng-class="{'alignRight':ctrl.alignMessageRight(msg.sender)}">{{msg.message}}</li>
             </ul>
-            {{ctrl.sentMessage}}
+            <!-- <div id="alignLeft" ng-class="{'alignRight':ctrl.alignMessageRight(msg.sender)}">{{ctrl.newMessage}}</div> -->
         </div>
         <textarea rows="2" cols="70" type="text" ng-model="ctrl.textArea" placeholder="Enter messages here "></textarea>
         <button ng-click="ctrl.send(ctrl.textArea)">send</button>
