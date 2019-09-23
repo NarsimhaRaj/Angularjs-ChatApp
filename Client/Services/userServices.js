@@ -65,6 +65,7 @@
             return error.data;
         })
         }
+        
         /**
          * @description : uses http post service, sends token as route parameter and password, confirm Password as request body
          * @param {token}, token is jwt token taken from route params
