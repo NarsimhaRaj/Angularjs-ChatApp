@@ -21,28 +21,35 @@ require('dotenv').config();
 //connecting to mongoose database
 mongoose.connect(process.env.DBCONNECTION,{useFindAndModify:false,useNewUrlParser: true,useUnifiedTopology:true, useCreateIndex :true});
 
+//mongoose connection events 
 mongoose.connection.on("connected",()=>{
     console.log("Successfully connected to database");
 });
+//if disconnected 
 mongoose.connection.on("disconnected",()=>{
     console.log("Disconnected to database");
     process.exit(1);
 });
+//if any error in connecting to mongoose database
 mongoose.connection.on("error",()=>{
     console.log("Error in Connecting ");
     process.exit(1);
 });
 
+//using middleware bodyparse 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.json());
+
+//Express-validator is a middleware for Express on Node.js that can help you validate user input. 
 app.use(expressValidator())
 
-app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+// // to avoid CORS errors
+// app.use(function(req, res, next) {
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//     next();
+// });
 app.use('/chat_app', Router);
 
 const port = process.env.PORT || 5064
@@ -51,22 +58,25 @@ var server=app.listen(port,()=>{
 });
 
 const io=socket(server);
+//loads index.html file at client side 
 app.use(express.static('../Client'));
+
+//socket connection 
 io.on('connection', function(socket){
     console.log("connected to socket")
+    //if socket is disconnected 
     socket.on('disconnect', function() {
         console.log("disconnected")
         });
+        //when user emits a sending event takes daat and stores message in database with sender details
         socket.on('sending', function(data) { 
-           UserController.chatConversation(data);
-           io.sockets.in(data.receiver).emit("receiving",data.message);
+           UserController.chatConversation(data,(err,response)=>{
+               if(response.status){
+                   //emits oafter data is being stored successfully in db
+                  io.sockets.emit("receiving",data.message);      
+               }
+           })
         });
-    // connection.push(socket);
-    // console.log('%s user connected',connection.length);
-    // socket.on('disconnect',function(data){
-    //     connection.splice(connection.indexOf(socket),1);
-    //     console.log("1 user disconnected, connected users %s ",connection.length);
-    // })
 });
 
 
