@@ -7,14 +7,14 @@
         </tr>
         <tr>
             <td>password : </td>
-            <td><input id="password" type="password" ng-model="ctrl.password"/ placeholder="Enter password" required></td>
+            <td><input id="password" type="password" ng-model="ctrl.password" placeholder="Enter password" required></td>
         </tr>
         <tr>
             <td>
                 <button ng-click="ctrl.singin(ctrl.email,ctrl.password)" required>singin</button>
             </td>
             <td>
-                <button ng-click="ctrl.redirectToForgotPassword()" required>forgotPassword</button>
+                <a href="#!/forgotPassword" required>forgotPassword?</a>
             </td>
         </tr>
         <tr>
