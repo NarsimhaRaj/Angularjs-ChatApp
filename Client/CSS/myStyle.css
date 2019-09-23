@@ -92,7 +92,7 @@ li:hover{
     color: black;
     background-color: blanchedalmond;
 }
-#even{
+#alignLeft{
     padding:10px;
     background-color: antiquewhite;
     color: black;
@@ -100,12 +100,10 @@ li:hover{
     border-color: aliceblue;
 
 }
-#odd{
+.alignRight{
     padding: 10px;
     color:#3c763d;
     background-color:#dff0d8;
     border-color:#d6e9c6;
     text-align: right
-}
-.messages{
 }
