@@ -9,8 +9,9 @@ const chatSchema = mongoose.Schema({
         required:true,
         type: String
     },
-    messages:[{
-        type: String
+    conversations:[{
+        sender:{type:String},
+        message:{type: String}
     }]
 });
 

@@ -119,6 +119,11 @@ exports.getUsers = (req, callback) => {
         }).catch(err => callback("unable to get data, error is :" + err));
 }
 
+/**
+ * @description : finds sender-receiver or receiver sender details exist in mongodb if exist then push new message to their conversation
+ * with message and sentby details, if not exist then create new record of sender,receiver, conversation message and sender  
+ * @param {callback}, is a function defined in chatConversation function in userController
+ */
 exports.chatConversation = (chatData, callback) => {
     var fromTO = {
         $or: [{ sender: chatData.sender, receiver: chatData.receiver },
@@ -127,25 +132,27 @@ exports.chatConversation = (chatData, callback) => {
     };
     Chat.findOne(fromTO)
         .then((data) => {
-            if(chatData.message!="" || chatData!=null ||chatData!=undefined){
-            let tempMessages = data.messages;
-            tempMessages.push(chatData.message);
-            Chat.findOneAndUpdate(fromTO, { $set: { messages: tempMessages } }, { new: true })
+
+            let tempMessages = data.conversations;
+            tempMessages.push({ sender: chatData.sender, message: chatData.message });
+            Chat.findOneAndUpdate(fromTO, { $set: { conversations: tempMessages } }, { new: true })
                 .then((result) => {
                     callback(null, result)
                 }).catch((err) => {
                     callback("could not update your messages")
                 })
-            }
-            else
-                callback("Enter any message");
         }).catch(() => {
-            var chat = new Chat({ sender: chatData.sender, receiver: chatData.receiver, messages: [chatData.message] });
+            var chat = new Chat({ sender: chatData.sender, receiver: chatData.receiver, conversations: [{ sender: chatData.sender, message: chatData.message }] });
             chat.save();
             callback(null, chat);
 
         })
 }
+/**
+ * @description : request body holds sender and receiver information details if sender receiver details exist then fetchs
+ * conversation between them if not send "no messages to show "
+ * @param {callback}, is a function defined in fetchConversation function in userController
+ */
 exports.fetchConversation = (body, callback) => {
     var fromTO = {
         $or: [{ sender: body.sender, receiver: body.receiver },
@@ -154,13 +161,13 @@ exports.fetchConversation = (body, callback) => {
     };
     Chat.findOne(fromTO)
         .then((data) => {
-            if(data){
+            if (data) {
                 callback(null, data)
-        }
-        else{
-            callback("NO messages show")
-        }
-    }).catch((err) => {
+            }
+            else {
+                callback("NO messages to show")
+            }
+        }).catch((err) => {
             callback("NO Messages to show " + err);
         })
 }
