@@ -34,7 +34,7 @@
          * @param {email}, email of registered user  
          * @param {password}, registered user password
          */
-        this.singin = function (email, password) {
+        this.signin = function (email, password) {
             sender = email;
             this.user = { email: email, password: password }
             httpService.postLoginService(this.user).then(function (response) {
@@ -46,6 +46,7 @@
                 else {
                     self.errorMode = response.error;
                 }
+
             });
             self.username = ""
             self.password = ""
@@ -66,7 +67,7 @@
             httpService.register(user)
                 .then(function (response) {
                     if (response.status) {
-                        self.successMode = response.message;
+                        this.successMode = response.message;
                         self.username = ""; self.firstname = ""
                         self.lastname = ""; self.email = ""
                         self.password = ""; self.confirmPassword = ""
@@ -75,7 +76,7 @@
                     }
                     else {
 
-                        self.errorMode = response.errors;
+                        this.errorMode = response.errors;
                     }
                 });
         }
@@ -160,6 +161,9 @@
         //redirect to register page on clicking register button
         this.redirectToRegister = function () {
             $location.path("/register");
+        }
+        this.redirectToForgotPass=function(){
+            $location.path("/forgotPassword");
         }
 
         /**
