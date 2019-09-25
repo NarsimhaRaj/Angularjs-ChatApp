@@ -126,7 +126,6 @@
         $scope.fetch = () => {
             httpService.fetchConversation({ sender: senderEmail, receiver: receiverEmail })
                 .then((response) => {
-                    console.log(response.data)
                     if (response.status)
                         $scope.messagesPacket = response.data.conversations;
                     else
@@ -150,9 +149,10 @@
         }
 
         socket.on('receiving', function (response) {
-            $scope.$apply(() => {
-                $scope.messagesPacket = response.conversations;
-            })
+            // $scope.$apply(() => {
+            //     $scope.messagesPacket = response.conversations;
+            // })
+            $scope.fetch();
         })
 
         //redirect to register page on clicking register button
