@@ -178,7 +178,7 @@ exports.chatConversation = (chatData,callback) => {
             callback(response)
         }
         else {
-            response.message = data;
+            response.data = data;
             response.status = true;
             //res.send(response);
             // return response;
@@ -201,10 +201,11 @@ exports.fetchConversation=(req,res)=>{
             res.status(404).send(response);
         }
         else {
-            response.message = data;
+            response.data = data;
             response.status = true;
             //res.send(response);
             // return response;
+            
             res.status(200).send(response);
         }
     });

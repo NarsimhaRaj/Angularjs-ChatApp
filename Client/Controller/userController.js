@@ -6,14 +6,14 @@
     var socket = io.connect("http://localhost:5064");
 
     app.value("sender", "");
-
-    var sender = null;
     /**
      * @description : Main controller has functions as login,forgot
      * @param {$scope} , Controller Scope varibale
      * @param {$location}  , location used to redirect to given path
      * @param {httpService}  , calls $http services on being called
      */
+    var senderEmail=null;
+    var receiverEmail=null;
     function Main($scope, $location, httpService) {
         var self = this;
         this.successMode = undefined;
@@ -23,7 +23,7 @@
             .then((response) => {
                 if (response.status)
                     self.details = response.data.filter((friendsId) => {
-                        return sender != friendsId.email;
+                        return senderEmail != friendsId.email;
                     });
                 else
                     self.details = response.error;
@@ -35,7 +35,7 @@
          * @param {password}, registered user password
          */
         this.signin = function (email, password) {
-            sender = email;
+            senderEmail=email;
             this.user = { email: email, password: password }
             httpService.postLoginService(this.user).then(function (response) {
                 if (response.status) {
@@ -119,8 +119,19 @@
          */
         this.chatHistory = (receiver) => {
             this.flag = true;
-            this.receiver = receiver;
+            receiverEmail = receiver;
             $scope.fetch();
+        }
+        // $scope.messagesPacket = null;
+        $scope.fetch = () => {
+            httpService.fetchConversation({ sender: senderEmail, receiver: receiverEmail })
+                .then((response) => {
+                    console.log(response.data)
+                    if (response.status)
+                        $scope.messagesPacket = response.data.conversations;
+                    else
+                        $scope.messagesPacket = response.error;
+                })
         }
 
         /**
@@ -130,7 +141,7 @@
          */
         this.send = (message) => {
             if (message != "" || message != null || message != undefined) {
-                var chatData = { sender: sender, receiver: this.receiver, message: message }
+                var chatData = { sender: senderEmail, receiver: receiverEmail, message: message }
                 socket.emit('sending', chatData);
             }
             else {
@@ -138,31 +149,17 @@
             }
         }
 
-        socket.on('receiving', function (responseMessage) {
-            $scope.fetch();
+        socket.on('receiving', function (response) {
+            $scope.$apply(() => {
+                $scope.messagesPacket = response.conversations;
+            })
         })
-
-        /**
-         * @description : fetch chat Conversation between sender and receiver
-         */
-        $scope.fetch = () => {
-            console.log(sender + " " + this.receiver);
-            httpService.fetchConversation({ sender: sender, receiver: this.receiver })
-                .then((response) => {
-                    if (response.status)
-                        this.messagesPacket = response.message.conversations;
-                    else
-                        this.messagesPacket = response.error;
-                });
-        }
-
-
 
         //redirect to register page on clicking register button
         this.redirectToRegister = function () {
             $location.path("/register");
         }
-        this.redirectToForgotPass=function(){
+        this.redirectToForgotPass = function () {
             $location.path("/forgotPassword");
         }
 
@@ -171,7 +168,7 @@
          * @param {userId}, userId is message sent person's id
          */
         this.alignMessageRight = (userId) => {
-            return userId == sender ? true : false;
+            return userId == senderEmail ? true : false;
         }
 
     }

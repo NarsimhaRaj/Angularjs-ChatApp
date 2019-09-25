@@ -73,7 +73,7 @@ io.on('connection', function(socket){
            UserController.chatConversation(data,(err,response)=>{
                if(response.status){
                    //emits oafter data is being stored successfully in db
-                  io.sockets.emit("receiving",data.message);      
+                  io.sockets.emit("receiving",response.data);      
                }
            })
         });

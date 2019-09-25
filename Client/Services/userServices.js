@@ -61,7 +61,6 @@
             return $http.post("http://localhost:5064/chat_app/fetchConversation",chatData).then(function(response){
                 return response.data
         },function(error){
-            console.log(error.data)
             return error.data;
         })
         }
