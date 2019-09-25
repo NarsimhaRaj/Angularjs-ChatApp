@@ -9,7 +9,7 @@ exports.verifyToken = (req,res,next) => {
     //console.log(token)
     // var token =req.params.token;
     if(!token){
-        return res.status(404).send({error:"Invalid Link",status:false});
+        return res.status(404).send({error:"Invalid Link, autherization failed",status:false});
         
     }try{
         req.decode=jwt.verify(token,process.env.KEY);
@@ -17,7 +17,7 @@ exports.verifyToken = (req,res,next) => {
     }
     catch(err){
     
-        res.status(404).send({error:"Invalid Autherization",status:false});
+        res.status(422).send({error:"Invalid Autherization",status:false});
     }
 }
 
