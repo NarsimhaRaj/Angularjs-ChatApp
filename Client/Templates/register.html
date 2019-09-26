@@ -4,10 +4,7 @@
     <table id="tableid" align="center">
         <tr>
             <td>
-                <div class="errorCode" ng-if="ctrl.errorMode">{{ctrl.errorMode}}</div>
-                <div class="successCode" ng-if="ctrl.successMode">
-                    {{ctrl.successMode}}
-                </div>
+                <div id="snackbar">{{ctrl.snackbar}}</div>
             </td>
         </tr>
         <tr>
@@ -36,8 +33,7 @@
             <td><input type="password" ng-model="ctrl.confirmPassword" /></td>
         </tr>
         <tr>
-            <td><button
-                    ng-click="ctrl.register(ctrl.username, ctrl.firstname, ctrl.lastname, ctrl.email,ctrl.password, ctrl.confirmPassword)">save</button>
+            <td><button ng-click="ctrl.register()">save</button>
             </td>
         </tr>
     </table>

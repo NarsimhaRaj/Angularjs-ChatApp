@@ -4,7 +4,7 @@
     /**
      * @description : calls constructor with $http services, whose url's are server side routes 
     */
-    app.service("httpService",function ($http) {
+    app.service("httpService",function($http) {
         /**
          * @description : uses http get method, which gets all the registered users if no error resolves, otherwise rejects(error response)
          */

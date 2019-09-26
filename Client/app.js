@@ -11,7 +11,7 @@ app.config(["$routeProvider", function ($routeProvider) {
         })
         .when('/chat', {
             templateUrl: 'Templates/chat.html',
-            controller: 'mainController as ctrl'
+            controller: 'mainController'
         }).when('/forgotPassword', {
             templateUrl: 'Templates/forgotPassword.html',
             controller: 'mainController as ctrl'

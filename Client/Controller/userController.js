@@ -12,21 +12,21 @@
      * @param {$location}  , location used to redirect to given path
      * @param {httpService}  , calls $http services on being called
      */
-    var senderEmail=null;
-    var receiverEmail=null;
+    var senderEmail = null;
+    var receiverEmail = null;
     function Main($scope, $location, httpService) {
         var self = this;
         this.successMode = undefined;
         this.errorMode = undefined;
-        this.flag = false;
+        $scope.flag = true;
         httpService.getService()
             .then((response) => {
                 if (response.status)
-                    self.details = response.data.filter((friendsId) => {
+                    $scope.details = response.data.filter((friendsId) => {
                         return senderEmail != friendsId.email;
                     });
                 else
-                    self.details = response.error;
+                    $scope.details = response.error;
             });
 
         /**
@@ -35,17 +35,19 @@
          * @param {password}, registered user password
          */
         this.signin = function (email, password) {
-            senderEmail=email;
+            senderEmail = email;
             this.user = { email: email, password: password }
             httpService.postLoginService(this.user).then(function (response) {
                 if (response.status) {
-                    self.successMode = response.message;
-                    alert(response.message);
+                    self.snackbar = response.message;
                     $location.path("/chat");
                 }
                 else {
-                    self.errorMode = response.error;
+                    self.snackbar = response.error;
                 }
+                var x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
 
             });
             self.username = ""
@@ -55,29 +57,31 @@
          * @description : creates a User object with details mensioned sends data to sever using $http services
          * if data valid response comes registerd successfully if not error comes 
          */
-        this.register = function (username, firstname, lastname, email, password, confirmPassword) {
+        this.register = function () {
             var user = {
-                username: username,
-                firstname: firstname,
-                lastname: lastname,
-                email: email,
-                password: password,
-                confirmPassword: confirmPassword
+                username: this.username,
+                firstname: this.firstname,
+                lastname: this.lastname,
+                email: this.email,
+                password: this.password,
+                confirmPassword: this.confirmPassword
             }
             httpService.register(user)
                 .then(function (response) {
                     if (response.status) {
-                        this.successMode = response.message;
+                        this.snackbar = response.message;
                         self.username = ""; self.firstname = ""
                         self.lastname = ""; self.email = ""
                         self.password = ""; self.confirmPassword = ""
-                        alert(response.message);
                         $location.path("/login");
                     }
                     else {
 
-                        this.errorMode = response.errors;
+                        this.snackbar = response.errors;
                     }
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
                 });
         }
         /**
@@ -87,9 +91,12 @@
         this.forgotPassword = function (email) {
             httpService.forgotPassword({ email: email }).then((response) => {
                 if (response.status)
-                    self.successMode = response.message;
+                    self.snackbar = response.message;
                 else
-                    self.errorMode = response.errors;
+                    self.snackbar = response.errors;
+                var x = document.getElementById("snackbar");
+                x.className = "show";
+                setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
             })
         }
 
@@ -103,13 +110,16 @@
             httpService.resetPassword(token, { password: password, confirmPassword: confirmPassword })
                 .then((response) => {
                     if (response.status) {
-                        this.successMode = response.message;
-                        alert(response.message)
+                        this.snackbar = response.message;
+                        // alert(response.message)
                     }
                     else {
-                        this.errorMode = response.error;
-                        alert(response.error);
+                        this.snackbar = response.error;
+                        // alert(response.error);
                     }
+                    var x = document.getElementById("snackbar");
+                    x.className = "show";
+                    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
                 })
         }
 
@@ -117,8 +127,8 @@
          * @description : friends chat History will be shown on clicking on friends in contact details
          * @param {receiver}, particular receiver email to whom sender wants to sent
          */
-        this.chatHistory = (receiver) => {
-            this.flag = true;
+        $scope.chatHistory = (receiver) => {
+            $scope.flag = true;
             receiverEmail = receiver;
             $scope.fetch();
         }
@@ -138,8 +148,8 @@
          * sender, receiver and message  
          * @param {message}, message from sender
          */
-        this.send = (message) => {
-            if (message != "" || message != null || message != undefined) {
+        $scope.send = (message) => {
+            if (message != "" || message.trim() != "") {
                 var chatData = { sender: senderEmail, receiver: receiverEmail, message: message }
                 socket.emit('sending', chatData);
             }
@@ -167,7 +177,7 @@
          * @description : align messages right side if messages are from sender 
          * @param {userId}, userId is message sent person's id
          */
-        this.alignMessageRight = (userId) => {
+        $scope.alignMessageRight = (userId) => {
             return userId == senderEmail ? true : false;
         }
 
