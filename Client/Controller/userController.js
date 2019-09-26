@@ -5,7 +5,6 @@
 
     var socket = io.connect("http://localhost:5064");
 
-    app.value("sender", "");
     /**
      * @description : Main controller has functions as login,forgot
      * @param {$scope} , Controller Scope varibale
@@ -16,8 +15,6 @@
     var receiverEmail = null;
     function Main($scope, $location, httpService) {
         var self = this;
-        this.successMode = undefined;
-        this.errorMode = undefined;
         $scope.flag = true;
         httpService.getService()
             .then((response) => {
@@ -130,18 +127,19 @@
         $scope.chatHistory = (receiver) => {
             $scope.flag = true;
             receiverEmail = receiver;
-            $scope.fetch();
+            var chatData = { sender: senderEmail, receiver: receiverEmail, message: "" }
+            socket.emit('sending', chatData);
         }
         // $scope.messagesPacket = null;
-        $scope.fetch = () => {
-            httpService.fetchConversation({ sender: senderEmail, receiver: receiverEmail })
-                .then((response) => {
-                    if (response.status)
-                        $scope.messagesPacket = response.data.conversations;
-                    else
-                        $scope.messagesPacket = response.error;
-                })
-        }
+        // $scope.fetch = () => {
+        //     httpService.fetchConversation({ sender: senderEmail, receiver: receiverEmail })
+        //         .then((response) => {
+        //             if (response.status)
+        //                 $scope.messagesPacket = response.data.conversations;
+        //             else
+        //                 $scope.messagesPacket = response.error;
+        //         })
+        // }
 
         /**
          * @description:on clicking send button on client side and emits an event at server side, sends chat data object containing 
@@ -159,10 +157,11 @@
         }
 
         socket.on('receiving', function (response) {
-            // $scope.$apply(() => {
-            //     $scope.messagesPacket = response.conversations;
-            // })
-            $scope.fetch();
+            console.log('1')
+            $scope.$apply(() => {
+                $scope.messagesPacket = response.conversations;
+            })
+            // $scope.fetch();
         })
 
         //redirect to register page on clicking register button

@@ -69,11 +69,12 @@ io.on('connection', function(socket){
         console.log("disconnected")
         });
         //when user emits a sending event takes daat and stores message in database with sender details
+
         socket.on('sending', function(data) { 
-           UserController.chatConversation(data,(err,response)=>{
-               if(response.status){
-                   //emits oafter data is being stored successfully in db
-                  io.sockets.emit("receiving",response.data);      
+           UserController.chatConversation(data,(err,response)=>{ 
+            if(response.status){
+                   socket.join(response.data.sender+" "+response.data.receiver);
+                   io.to(response.data.sender+" "+response.data.receiver).emit('receiving',response.data);
                }
            })
         });

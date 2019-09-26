@@ -9,7 +9,7 @@
     <div class="messageArea" ng-if="flag">
         <div class="chatHistory" id="chatWindow">
             <ul class="messages" ng-repeat="msg in messagesPacket track by $index" type="none">
-                <li id="alignLeft" ng-class="{'alignRight':alignMessageRight(msg.sender)}">{{msg.message}}</li>
+                <li id="alignLeft" ng-class="{'alignRight':alignMessageRight(msg.sender)}" ng-if='msg.message!=""'>{{msg.message}}</li>
             </ul>
             <!-- <div id="alignLeft" ng-class="{'alignRight':ctrl.alignMessageRight(msg.sender)}">{{ctrl.newMessage}}</div> -->
         </div>

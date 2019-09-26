@@ -174,7 +174,6 @@ exports.chatConversation = (chatData,callback) => {
         if (err) {
             response.error = "Some error occured ";
             response.status = false;
-            //res.send(response);
             callback(response)
         }
         else {
