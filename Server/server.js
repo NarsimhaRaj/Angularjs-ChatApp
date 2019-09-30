@@ -70,6 +70,10 @@ io.on('connection', function(socket){
         });
         //when user emits a sending event takes daat and stores message in database with sender details
 
+        socket.on("Create Private Room",function(data){
+            socket.join(data.sender+" "+data.receiver)
+        });
+
         socket.on('sending', function(data) { 
            UserController.chatConversation(data,(err,response)=>{ 
             if(response.status){

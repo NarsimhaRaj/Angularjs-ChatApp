@@ -127,8 +127,17 @@
         $scope.chatHistory = (receiver) => {
             $scope.flag = true;
             receiverEmail = receiver;
-            var chatData = { sender: senderEmail, receiver: receiverEmail, message: "" }
-            socket.emit('sending', chatData);
+            httpService.fetchConversation({ sender: senderEmail, receiver: receiverEmail })
+                .then((response) => {
+                    if (response.status){
+                        socket.emit("Create Private Room",{sender:response.data.sender,receiver:response.data.receiver})
+                        $scope.messagesPacket = response.data.conversations;
+                    }
+                    else
+                        $scope.messagesPacket = response.error;
+                })
+            // var chatData = { sender: senderEmail, receiver: receiverEmail, message: "" }
+            // socket.emit('sending', chatData);
         }
         // $scope.messagesPacket = null;
         // $scope.fetch = () => {
@@ -155,14 +164,22 @@
                 alert("Please enter some text ");
             }
         }
-
         socket.on('receiving', function (response) {
-            console.log('1')
             $scope.$apply(() => {
                 $scope.messagesPacket = response.conversations;
             })
             // $scope.fetch();
         })
+        /**
+         * socket.on('receiving',function(response){
+         * if((senderEmail==response.sender && receiverEmail==response.receiver)||(senderEmail==response.receiver && receiverEmail==response.sender))
+         * {
+         *    $scope.$apply(() => {
+                $scope.messagesPacket = response.conversations;
+             })  
+         * }
+         * })
+         */
 
         //redirect to register page on clicking register button
         this.redirectToRegister = function () {
